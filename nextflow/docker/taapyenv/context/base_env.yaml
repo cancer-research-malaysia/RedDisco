@@ -1,0 +1,22 @@
+name: base
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python
+  - polars
+  - pandas
+  - numpy
+  - scipy
+  - matplotlib
+  - seaborn
+  - plotly
+  - jupyter
+  - ipython
+  - scikit-learn
+  - statsmodels
+  - pyarrow
+  - pysam
+  - logzero
+  - awscli
+  - pip
