@@ -3,3 +3,6 @@
 
 nextflow/.nextflow/*
 .pixi/*
+
+# local inputs
+inputs/*
