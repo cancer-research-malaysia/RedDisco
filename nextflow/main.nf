@@ -4,8 +4,8 @@ nextflow.enable.dsl=2
 
 // Import modules
 include { TRIM_READS_FASTP } from './modules/trim_reads_fastp.nf'
-include { QC_READS_FASTQC } from './modules/qc_reads_fastqc.nf'
-include { QUANT_COUNTS_KALLISTO } from './modules/quant_counts_kallisto.nf'
+// include { QC_READS_FASTQC } from './modules/qc_reads_fastqc.nf'
+// include { QUANT_COUNTS_KALLISTO } from './modules/quant_counts_kallisto.nf'
 
 workflow {
     
@@ -39,36 +39,9 @@ workflow {
         error "Either --inputDir or --manifestPath must be provided"
     }
 
-    // --- Conditional QC/Trimming Logic ---
+    // --- Main Analysis ---
     
-    // This variable will hold the channel that feeds Kallisto
-    def processed_reads_ch 
-
-    if (params.qcTool == 'fastqc') {
-        // Run FastQC on the raw data
-        QC_READS_FASTQC(fastq_ch)
-
-    } else {
-        // Default: Run fastp
-        TRIM_READS_FASTP(fastq_ch)
-        
-        // We use the trimmed reads channel for downstream steps
-        processed_reads_ch = TRIM_READS_FASTP.out.trimmed_reads
-        
-    }
-
-    // --- Downstream Analysis (Kallisto) ---
-    
-    // Run kallisto quantification if enabled
-    if (params.runKallisto) {
-        // Load kallisto index from S3 (cached)
-        kallisto_index_ch = channel.value(file(params.kallistoIndex))
-        
-        QUANT_COUNTS_KALLISTO(
-            processed_reads_ch, // Feeds the raw or trimmed reads channel
-            kallisto_index_ch
-        )
-    }
+    //
 
     // Completion handler
     workflow.onComplete = {
