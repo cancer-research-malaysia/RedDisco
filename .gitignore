@@ -6,3 +6,4 @@ nextflow/.nextflow/*
 
 # local inputs
 inputs/*
+outputs/*
