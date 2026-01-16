@@ -2,7 +2,6 @@
 
 # REDItools DNA-RNA variant filtering pipeline
 # Based on Nature Protocols procedure
-# Timing: ~30 hours
 
 set -e  # Exit on error
 set -u  # Exit on undefined variable
@@ -13,10 +12,9 @@ set -o pipefail  # Exit on pipe failure
 # ============================================================================
 
 # Input directories
-REDITOOLS_DIR="../../../REDItools"
-RMSK_DIR="../../../rmsk"
-SNP_DIR="../../../snp151"
-REDIPORTAL_DIR="../../../rediportal"
+RMSK="inputs/refs/rmsk.sorted.gtf.gz"
+SNP_DIR="inputs/refs/snp151.sorted.gtf.gz"
+
 ALIGNMENT_DIR="../../../Alignment"
 GENOME_DIR="../../../genome_hg19"
 GENCODE_DIR="../../../Gencode_annotation"
@@ -52,17 +50,16 @@ echo "========================================================================"
 echo "Starting: $(date)"
 echo ""
 
-# Step 9-10: Navigate to output folder
+# Step 1: Navigate to output folder
 echo "[Step 9-10] Navigating to REDItoolDnaRna.py output folder..."
 cd "${EDITING_DIR}/${DNARNA_DIR}"
-
-# Step 11: Filter invariant positions and low coverage sites
+##############################################################################
+# Step 2: Filter invariant positions and low coverage sites
 echo "[Step 11] Filtering invariant positions and sites with <10 WGS reads..."
 q='"'
-awk -v FS="\t" '{if ($8!="-" && $10>=10 && $13=="-") print}' \
-    "outTable_${SAMPLE_ID}" > "outTable_${SAMPLE_ID}_${CHR}.out"
-
-# Step 12: Annotate with RepeatMasker
+awk -v FS="\t" '{if ($8!="-" && $10>=10 && $13=="-") print}' "outTable_${SAMPLE_ID}" > "outTable_${SAMPLE_ID}.out"
+###############################################################################
+# Step 3: Annotate with RepeatMasker
 echo "[Step 12] Annotating with RepeatMasker..."
 python "${REDITOOLS_DIR}/accessory/AnnotateTable.py" \
     -a "${RMSK_GTF}" \
@@ -70,8 +67,8 @@ python "${REDITOOLS_DIR}/accessory/AnnotateTable.py" \
     -i "outTable_${SAMPLE_ID}_${CHR}.out" \
     -o "outTable_${SAMPLE_ID}_${CHR}.out.rmsk" \
     -u
-
-# Step 13: Annotate with dbSNP
+################################################################################
+# Step 4: Annotate with dbSNP
 echo "[Step 13] Annotating with dbSNP..."
 python "${REDITOOLS_DIR}/accessory/AnnotateTable.py" \
     -a "${SNP_GTF}" \
@@ -79,33 +76,33 @@ python "${REDITOOLS_DIR}/accessory/AnnotateTable.py" \
     -i "outTable_${SAMPLE_ID}_${CHR}.out.rmsk" \
     -o "outTable_${SAMPLE_ID}_${CHR}.out.rmsk.snp" \
     -u
-
-# Step 14: Create first set of positions (≥5 RNA reads, 1 mismatch)
+################################################################################
+# Step 5: Create first set of positions (≥5 RNA reads, 1 mismatch)
 echo "[Step 14] Selecting positions: ≥5 RNAseq reads, 1 mismatch..."
 python "${REDITOOLS_DIR}/accessory/selectPositions.py" \
     -i "outTable_${SAMPLE_ID}_${CHR}.out.rmsk.snp" \
     -c 5 -v 1 -f 0.0 \
     -o "outTable_${SAMPLE_ID}_${CHR}.out.rmsk.snp.sel1"
-
-# Step 15: Create second set of positions (≥10 RNA reads, 3 mismatches, freq≥0.1)
+###############################################################################
+# Step 6: Create second set of positions (≥10 RNA reads, 3 mismatches, freq≥0.1)
 echo "[Step 15] Selecting positions: ≥10 RNAseq reads, 3 mismatches, freq≥0.1..."
 python "${REDITOOLS_DIR}/accessory/selectPositions.py" \
     -i "outTable_${SAMPLE_ID}_${CHR}.out.rmsk.snp" \
     -c 10 -v 3 -f 0.1 \
     -o "outTable_${SAMPLE_ID}_${CHR}.out.rmsk.snp.sel2"
-
-# Step 16: Select ALU sites
+###############################################################################
+# Step 7: Select ALU sites
 echo "[Step 16] Selecting ALU sites..."
 awk -v FS="\t" '{if ($1!="chrM" && substr($16,1,3)=="Alu" && $17=="-" && $8!="-" && $10>=10 && $13=="-") print}' \
     "outTable_${SAMPLE_ID}_${CHR}.out.rmsk.snp.sel1" > "outTable_${SAMPLE_ID}_${CHR}.out.rmsk.snp.alu"
-
-# Step 17: Select REP NON ALU sites
+################################################################################
+# Step 8: Select REP NON ALU sites
 echo "[Step 17] Selecting REP NON ALU sites..."
 awk -v FS="\t" '{if ($1!="chrM" && substr($16,1,3)!="Alu" && $15!="-" && $15!="Simple_repeat" && $15!="Low_complexity" && $17=="-" && $8!="-" && $10>=10 && $14<=0.05 && $9>=0.1) print}' \
     "outTable_${SAMPLE_ID}_${CHR}.out.rmsk.snp.sel2" > "outTable_${SAMPLE_ID}_${CHR}.out.rmsk.snp.nonalu"
-
-# Step 18: Select NON REP sites
-echo "[Step 18] Selecting NON REP sites..."
+################################################################################
+# Step 9: Select NON REP sites
+echo "[Step 09] Selecting NON REP sites..."
 awk -v FS="\t" '{if ($1!="chrM" && substr($16,1,3)!="Alu" && $15=="-" && $17=="-" && $8!="-" && $10>=10 && $14<=0.05 && $9>=0.1) print}' \
     "outTable_${SAMPLE_ID}_${CHR}.out.rmsk.snp.sel2" > "outTable_${SAMPLE_ID}_${CHR}.out.rmsk.snp.nonrep"
 

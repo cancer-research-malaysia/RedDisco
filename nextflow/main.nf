@@ -3,8 +3,7 @@
 nextflow.enable.dsl=2
 
 // Import modules
-include { TRIM_READS_FASTP } from './modules/trim_reads_fastp.nf'
-// include { QC_READS_FASTQC } from './modules/qc_reads_fastqc.nf'
+// include { CALL_RE_EVENTS_REDITOOLS_V1 } from './modules/call_re_events_reditools_v1.nf'
 // include { QUANT_COUNTS_KALLISTO } from './modules/quant_counts_kallisto.nf'
 
 workflow {
