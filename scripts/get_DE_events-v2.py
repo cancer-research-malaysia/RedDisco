@@ -484,15 +484,36 @@ else:
             ctrls_mean = sum(map(float, filter(lambda x: x != '-', ctrls_freq))) / len(filter(lambda x: x != '-', ctrls_freq))
             dss_mean = sum(map(float, filter(lambda x: x != '-', dss_freq))) / len(filter(lambda x: x != '-', dss_freq))
             delta_diff = abs(ctrls_mean - dss_mean)
-            pvalue = stats.mannwhitneyu(ctrls_freq, dss_freq, alternative='two-sided')
-            row.append(round(delta_diff, 3))
-            row.append(str(round(pvalue[1], 3)))
-            correction_argmnt = [(pvalue[1], ctrls_freq + dss_freq)]
+            
+            # Check if all values are identical (Mann-Whitney will fail)
+            all_values = filter(lambda x: x != '-', ctrls_freq + dss_freq)
+            if len(set(all_values)) == 1:
+                # All values are identical, no difference
+                row.append(round(delta_diff, 3))
+                row.append('-')
+                if pvalue_correction == 1:
+                    row.append('-')
+                elif pvalue_correction == 2:
+                    row.append('-')
+            else:
+                try:
+                    pvalue = stats.mannwhitneyu(ctrls_freq, dss_freq, alternative='two-sided')
+                    row.append(round(delta_diff, 3))
+                    row.append(str(round(pvalue[1], 3)))
+                    correction_argmnt = [(pvalue[1], ctrls_freq + dss_freq)]
 
-            if pvalue_correction == 1:
-                row.append(round(get_b(correction_argmnt, 0.05)[-1], 6))
-            elif pvalue_correction == 2:
-                row.append(round(get_bh(correction_argmnt, 0.05)[-1], 6))
+                    if pvalue_correction == 1:
+                        row.append(round(get_b(correction_argmnt, 0.05)[-1], 6))
+                    elif pvalue_correction == 2:
+                        row.append(round(get_bh(correction_argmnt, 0.05)[-1], 6))
+                except ValueError:
+                    # Fallback for any other Mann-Whitney errors
+                    row.append(round(delta_diff, 3))
+                    row.append('-')
+                    if pvalue_correction == 1:
+                        row.append('-')
+                    elif pvalue_correction == 2:
+                        row.append('-')
         else:
             if pvalue_correction == 0:
                 row += ['-', '-']
@@ -508,5 +529,4 @@ else:
             row_b = row_b[0].split('_') + row_b[2:]
             row_b.insert(2, 'A.to.G')
             print '\t'.join(map(str, row_b))
-            
-			
+

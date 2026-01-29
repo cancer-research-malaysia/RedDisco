@@ -1,46 +1,80 @@
 #!/usr/bin/env nextflow
-
 nextflow.enable.dsl=2
 
 // Import modules
-// include { CALL_RE_EVENTS_REDITOOLS_V1 } from './modules/call_re_events_reditools_v1.nf'
-// include { QUANT_COUNTS_KALLISTO } from './modules/quant_counts_kallisto.nf'
+include { CALL_RE_EVENTS_REDITOOLS_V1 } from './modules/call_re_events_reditools_v1.nf'
+include { POSTPROCESS_REDITOOLS_V1_OUTPUTS } from './modules/postprocess_reditools_v1_outputs.nf'
+include { WRANGLE_FINAL_OUTPUTS_REDITOOLS_V1 } from './modules/wrangle_final_outputs_reditools_v1.nf'
 
 workflow {
-    
-    // Input handling
-    if (params.manifestPath) {
-        // Read from manifest file
-        fastq_ch = channel
-            .fromPath(params.manifestPath)
-            .splitCsv(header: true, sep: '\t')
-            .map { row ->
-                tuple(row.sampleName, file(row.read1Path), file(row.read2Path))
-            }
-    } else if (params.inputDir) {
-        // Read from directory - handle multiple naming conventions
-        // Supports: _R1/_R2, _r1/_r2, _1/_2 (all case-insensitive)
-        // Supports: .fastq.gz, .fq.gz, .fastq, .fq
-        fastq_ch = channel
-            .fromFilePairs("${params.inputDir}/*_{R,r,}{1,2}.{fastq,fq}{.gz,}", size: 2, flat: true)
-            .map { sampleName, read1, read2 ->
-                // Verify we have proper R1/R2 pairing
-                def r1 = read1.name =~ /[_\.][Rr]?1\.(fastq|fq)(\.gz)?$/
-                def r2 = read2.name =~ /[_\.][Rr]?2\.(fastq|fq)(\.gz)?$/
-                
-                if (!r1 || !r2) {
-                    error "Invalid read pairing for sample ${sampleName}: ${read1.name}, ${read2.name}"
-                }
-                
-                tuple(sampleName, read1, read2)
-            }.view()
-    } else {
-        error "Either --inputDir or --manifestPath must be provided"
+    // Input handling for BAM files from metadata
+    if (!params.manifestPath) {
+        error "--manifestPath must be provided"
     }
+    
+    // Read from manifest file with BAM information
+    bam_ch = channel
+        .fromPath(params.manifestPath)
+        .splitCsv(header: true, sep: '\t')
+        .map { row ->
+            tuple(
+                row.sampleName,
+                file(row.bamPath),
+                file(row.baiPath),
+                file(row.dnaBamPath),
+                file(row.dnaBaiPath)
+            )
+        }
+
+    // Validate genome reference exists
+    if (!params.genomeFa) {
+        error "Genome reference file (--genomeFa) must be provided"
+    }
+    genome_fa = file(params.genomeFa)
+    splice_sites = file(params.spliceSitesAnnotation)
+    excluded_contigs = file(params.excludedContigs)
+    rmsk_gtf = file(params.rmskGtf)
+    rmsk_gtf_index = file(params.rmskGtfIndex)
+    snp_gtf = file(params.snpGtf)
+    snp_gtf_index = file(params.snpGtfIndex)
+    rediportals_db_gtf = file(params.rediportalsDbGtf)
+    rediportals_db_gtf_index = file(params.rediportalsDbGtfIndex)
 
     // --- Main Analysis ---
     
-    //
+    // Call RNA editing events using Reditools
+    CALL_RE_EVENTS_REDITOOLS_V1(
+        bam_ch,
+        genome_fa
+    )
+
+    // Post-process Reditools outputs
+    POSTPROCESS_REDITOOLS_V1_OUTPUTS(
+        bam_ch,
+        CALL_RE_EVENTS_REDITOOLS_V1.out.reditools_output,
+        genome_fa,
+        splice_sites,
+        excluded_contigs,
+        rmsk_gtf,
+        rmsk_gtf_index,
+        snp_gtf,
+        snp_gtf_index,
+        rediportals_db_gtf,
+        rediportals_db_gtf_index
+    )
+    // Combine the outputs using join on the common sampleId (the first element)
+    wrangle_input = POSTPROCESS_REDITOOLS_V1_OUTPUTS.out.for_wrangling
+        .join(POSTPROCESS_REDITOOLS_V1_OUTPUTS.out.out_tables)
+
+    // Use an explicit map with named parameters instead of 'it'
+    WRANGLE_FINAL_OUTPUTS_REDITOOLS_V1(
+        wrangle_input.map { sampleId, known, pos, pos_alu, _firstalu, _second -> 
+            tuple(sampleId, known, pos, pos_alu) 
+        },
+        wrangle_input.map { sampleId, _known, _pos, _pos_alu, firstalu, second -> 
+            tuple(sampleId, firstalu, second) 
+        }
+    )
 
     // Completion handler
     workflow.onComplete = {

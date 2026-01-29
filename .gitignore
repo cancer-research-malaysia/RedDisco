@@ -7,3 +7,10 @@ nextflow/.nextflow/*
 # local inputs
 inputs/*
 outputs/*
+
+nextflow/.nextflow
+nextflow/nextflow.log
+nextflow/outputs/*
+nextflow/work/*
+
+tempo/*

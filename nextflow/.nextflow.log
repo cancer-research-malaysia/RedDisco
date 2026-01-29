@@ -1,0 +1,376 @@
+Jan-28 23:08:43.403 [main] DEBUG nextflow.cli.Launcher - $> nextflow run main.nf -profile awsbatch --manifestPath /home/ec2-user/repos/RedDisco/nextflow/manifests/TCB-RED-n12-manifest.tsv --outputDir 's3://crmy-gb-main/reddisco/reditools-1-Nextflow-outputs/TCB-n12-run-II/' -c conf/nextflow.config -w 's3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/' -resume
+Jan-28 23:08:43.757 [main] DEBUG nextflow.cli.CmdRun - N E X T F L O W  ~  version 25.10.3
+Jan-28 23:08:43.832 [main] DEBUG nextflow.plugin.PluginsFacade - Setting up plugin manager > mode=prod; embedded=false; plugins-dir=/home/ec2-user/.nextflow/plugins; core-plugins: nf-amazon@3.4.3,nf-azure@1.20.2,nf-cloudcache@0.5.0,nf-codecommit@0.5.0,nf-console@1.3.0,nf-google@1.23.4,nf-k8s@1.2.2,nf-tower@1.17.4,nf-wave@1.16.1
+Jan-28 23:08:43.898 [main] INFO  o.pf4j.DefaultPluginStatusProvider - Enabled plugins: []
+Jan-28 23:08:43.900 [main] INFO  o.pf4j.DefaultPluginStatusProvider - Disabled plugins: []
+Jan-28 23:08:43.909 [main] INFO  org.pf4j.DefaultPluginManager - PF4J version 3.12.0 in 'deployment' mode
+Jan-28 23:08:43.971 [main] DEBUG nextflow.util.RetryConfig - Missing nextflow session - using default retry config
+Jan-28 23:08:44.262 [main] INFO  org.pf4j.AbstractPluginManager - No plugins
+Jan-28 23:08:44.364 [main] DEBUG nextflow.config.ConfigBuilder - User config file: /home/ec2-user/repos/RedDisco/nextflow/conf/nextflow.config
+Jan-28 23:08:44.371 [main] DEBUG nextflow.config.ConfigBuilder - Parsing config file: /home/ec2-user/repos/RedDisco/nextflow/conf/nextflow.config
+Jan-28 23:08:44.455 [main] DEBUG nextflow.config.ConfigBuilder - Applying config profile: `awsbatch`
+Jan-28 23:08:46.449 [main] DEBUG nextflow.config.ConfigBuilder - Available config profiles: [awsbatch, local]
+Jan-28 23:08:46.551 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins default=[nf-amazon@3.4.3]
+Jan-28 23:08:46.551 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins resolved requirement=[nf-amazon@3.4.3]
+Jan-28 23:08:47.536 [main] DEBUG n.plugin.HttpPluginRepository - Registry request: https://registry.nextflow.io/api/v1/plugins/dependencies?plugins=nf-amazon%403.4.3&nextflowVersion=25.10.3
+- code: 200
+- body: {"plugins":[{"id":"nf-amazon","downloadCount":83396,"downloadGhCount":1419950,"releases":[{"version":"3.4.3","url":"https://registry.nextflow.io/api/v1/plugins/nf-amazon/3.4.3/download/nf-amazon-3.4.3.zip","date":"2026-01-22T15:37:57.648851Z","sha512sum":"762bc2b9efbbd88e674e99a97d7c212d8665946c902f61ce7a0f073728dbb7d9295ad9bc27e3d36dab94db2bfa9f22fc58bc0f066709ba0a5d3094c94123c0a1","requires":">=25.09.2-edge","dependsOn":[],"downloadCount":1155,"downloadGhCount":0,"status":"PUBLISHED","spec":null,"description":null}],"projectUrl":"https://github.com/nextflow-io/nf-amazon","provider":"nextflow-io","description":null}]}
+Jan-28 23:08:47.607 [main] DEBUG nextflow.plugin.PluginUpdater - Installing plugin nf-amazon version: 3.4.3
+Jan-28 23:08:47.628 [main] INFO  org.pf4j.AbstractPluginManager - Plugin 'nf-amazon@3.4.3' resolved
+Jan-28 23:08:47.628 [main] INFO  org.pf4j.AbstractPluginManager - Start plugin 'nf-amazon@3.4.3'
+Jan-28 23:08:47.664 [main] DEBUG nextflow.plugin.BasePlugin - Plugin started nf-amazon@3.4.3
+Jan-28 23:08:47.690 [main] DEBUG nextflow.file.FileHelper - > Added 'S3FileSystemProvider' to list of installed providers [s3]
+Jan-28 23:08:47.715 [main] DEBUG n.secret.LocalSecretsProvider - Secrets store: /home/ec2-user/.nextflow/secrets/store.json
+Jan-28 23:08:47.719 [main] DEBUG nextflow.secret.SecretsLoader - Discovered secrets providers: [nextflow.secret.LocalSecretsProvider@7d2c345d] - activable => nextflow.secret.LocalSecretsProvider@7d2c345d
+Jan-28 23:08:47.723 [main] DEBUG nextflow.cli.CmdRun - Applied DSL=2 from script declaration
+Jan-28 23:08:47.743 [main] DEBUG nextflow.cli.CmdRun - Launching `main.nf` [hopeful_minsky] DSL2 - revision: b0fe06df1c
+Jan-28 23:08:47.817 [main] DEBUG nextflow.Session - Session UUID: 01841829-bf41-41e7-aa68-898838853988
+Jan-28 23:08:47.817 [main] DEBUG nextflow.Session - Run name: hopeful_minsky
+Jan-28 23:08:47.818 [main] DEBUG nextflow.Session - Executor pool size: 2
+Jan-28 23:08:47.839 [main] DEBUG nextflow.file.FileHelper - Creating a file system instance for provider: S3FileSystemProvider; config=[region:ap-southeast-5, batch:[cliPath:/opt/conda/bin/aws], client:[maxConnections:100]]
+Jan-28 23:08:47.861 [main] DEBUG nextflow.cloud.aws.config.AwsConfig - AWS S3 config properties: {max_connections=100, max_error_retry=5}
+Jan-28 23:08:49.149 [main] DEBUG nextflow.file.FilePorter - File porter settings maxRetries=3; maxTransfers=50; pollTimeout=null
+Jan-28 23:08:49.159 [main] DEBUG nextflow.util.ThreadPoolBuilder - Creating thread pool 'FileTransfer' minSize=10; maxSize=10; workQueue=LinkedBlockingQueue[-1]; allowCoreThreadTimeout=false
+Jan-28 23:08:49.188 [main] DEBUG nextflow.cli.CmdRun - 
+  Version: 25.10.3 build 10983
+  Created: 22-01-2026 15:34 UTC (23:34 GMT+08:20)
+  System: Linux 6.1.159-182.297.amzn2023.x86_64
+  Runtime: Groovy 4.0.28 on OpenJDK 64-Bit Server VM 23.0.2-internal-adhoc.conda.src
+  Encoding: UTF-8 (UTF-8)
+  Process: 297066@ip-172-31-35-169.ap-southeast-5.compute.internal [172.31.35.169]
+  CPUs: 2 - Mem: 7.6 GB (539.3 MB) - Swap: 0 (0)
+Jan-28 23:08:49.352 [main] DEBUG nextflow.file.FileHelper - Unable to determine FS type (1): s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD
+
+Jan-28 23:08:49.353 [main] DEBUG nextflow.Session - Work-dir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD [null]
+Jan-28 23:08:49.443 [main] DEBUG nextflow.executor.ExecutorFactory - Extension executors providers=[AwsBatchExecutor]
+Jan-28 23:08:49.461 [main] DEBUG nextflow.Session - Observer factory (v2): LinObserverFactory
+Jan-28 23:08:49.467 [main] DEBUG nextflow.Session - Observer factory (v2): DefaultObserverFactory
+Jan-28 23:08:49.479 [main] DEBUG nextflow.file.FileHelper - Creating a file system instance for provider: S3FileSystemProvider; config=[region:ap-southeast-5, batch:[cliPath:/opt/conda/bin/aws], client:[maxConnections:100]]
+Jan-28 23:08:49.481 [main] DEBUG nextflow.cloud.aws.config.AwsConfig - AWS S3 config properties: {max_connections=100, max_error_retry=5}
+Jan-28 23:08:49.704 [main] DEBUG nextflow.cache.CacheFactory - Using Nextflow cache factory: nextflow.cache.DefaultCacheFactory
+Jan-28 23:08:49.720 [main] DEBUG nextflow.util.CustomThreadPool - Creating default thread pool > poolSize: 3; maxThreads: 1000
+Jan-28 23:08:49.872 [main] DEBUG nextflow.Session - Session start
+Jan-28 23:08:50.092 [main] DEBUG nextflow.trace.TraceFileObserver - Workflow started -- trace file: s3://crmy-gb-main/reddisco/reditools-1-Nextflow-outputs/TCB-n12-run-II/reports/trace.txt
+Jan-28 23:08:50.476 [main] DEBUG nextflow.script.ScriptRunner - > Launching execution
+Jan-28 23:08:51.776 [main] DEBUG n.script.dsl.ProcessConfigBuilder - Config settings `withLabel:callREEvents` matches labels `callREEvents` for process with name CALL_RE_EVENTS_REDITOOLS_V1
+Jan-28 23:08:51.785 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: awsbatch
+Jan-28 23:08:51.787 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'awsbatch'
+Jan-28 23:08:51.799 [main] DEBUG nextflow.executor.Executor - [warm up] executor > awsbatch
+Jan-28 23:08:51.820 [main] DEBUG nextflow.util.ThrottlingExecutor - Creating throttling executor with opts: nextflow.util.ThrottlingExecutor$Options(poolName:AWSBatch-executor, limiter:RateLimiter[stableRate=50.0qps], poolSize:10, maxPoolSize:10, queueSize:5000, maxRetries:10, keepAlive:1m, autoThrottle:true, errorBurstDelay:1s, rampUpInterval:100, rampUpFactor:1.2, rampUpMaxRate:1.7976931348623157E308, backOffFactor:2.0, backOffMinRate:0.0166666667, retryDelay:1s)
+Jan-28 23:08:51.828 [main] DEBUG nextflow.util.ThrottlingExecutor - Creating throttling executor with opts: nextflow.util.ThrottlingExecutor$Options(poolName:AWSBatch-reaper, limiter:RateLimiter[stableRate=50.0qps], poolSize:10, maxPoolSize:10, queueSize:5000, maxRetries:10, keepAlive:1m, autoThrottle:true, errorBurstDelay:1s, rampUpInterval:100, rampUpFactor:1.2, rampUpMaxRate:1.7976931348623157E308, backOffFactor:2.0, backOffMinRate:0.0166666667, retryDelay:1s)
+Jan-28 23:08:51.830 [main] DEBUG n.cloud.aws.batch.AwsBatchExecutor - Creating parallel monitor for executor 'awsbatch' > pollInterval=10s; dumpInterval=5m
+Jan-28 23:08:51.840 [main] DEBUG n.processor.TaskPollingMonitor - >>> barrier register (monitor: awsbatch)
+Jan-28 23:08:51.929 [main] INFO  n.cloud.aws.batch.AwsBatchExecutor - Uploading local `bin` scripts folder to s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/tmp/e8/ef23973f0186eb23c8197cbd2a59d5/bin
+Jan-28 23:08:51.983 [main] DEBUG n.cloud.aws.nio.S3FileSystemProvider - S3 upload directory from=/home/ec2-user/repos/RedDisco/nextflow/bin to=s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/tmp/e8/ef23973f0186eb23c8197cbd2a59d5/bin
+Jan-28 23:08:51.987 [main] DEBUG nextflow.util.ThreadPoolBuilder - Creating thread pool 'S3TransferManager' minSize=10; maxSize=10; workQueue=LinkedBlockingQueue[-1]; allowCoreThreadTimeout=false
+Jan-28 23:08:52.506 [main] DEBUG n.cloud.aws.batch.AwsBatchExecutor - [AWS BATCH] Executor options=AwsOptions(remoteBinDir:/crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/tmp/e8/ef23973f0186eb23c8197cbd2a59d5/bin, fetchInstanceType:false, region:ap-southeast-5, jobRole:null, logsGroup:null, retryMode:standard, shareIdentifier:null, schedulingPriority:0, cliPath:/opt/conda/bin/aws, volumes:[], maxParallelTransfers:4, maxTransferAttempts:5, maxSpotAttempts:null, delayBetweenAttempts:10s, storageClass:null, storageEncryption:null, storageKmsKeyId:null, s3Acl:null, debug:null, requesterPays:null, awsCli:/opt/conda/bin/aws --region ap-southeast-5, fargateMode:false, s5cmdPath:null, executionRole:null)
+Jan-28 23:08:52.542 [main] DEBUG nextflow.processor.TaskProcessor - Creating process 'CALL_RE_EVENTS_REDITOOLS_V1': maxForks=20; fair=false; array=0
+Jan-28 23:08:52.602 [main] DEBUG n.script.dsl.ProcessConfigBuilder - Config settings `withLabel:postprocessReditools` matches labels `postprocessReditools` for process with name POSTPROCESS_REDITOOLS_V1_OUTPUTS
+Jan-28 23:08:52.605 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: awsbatch
+Jan-28 23:08:52.606 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'awsbatch'
+Jan-28 23:08:52.607 [main] DEBUG nextflow.processor.TaskProcessor - Creating process 'POSTPROCESS_REDITOOLS_V1_OUTPUTS': maxForks=20; fair=false; array=0
+Jan-28 23:08:52.636 [main] DEBUG n.script.dsl.ProcessConfigBuilder - Config settings `withLabel:finalWranglingReditools` matches labels `finalWranglingReditools` for process with name WRANGLE_FINAL_OUTPUTS_REDITOOLS_V1
+Jan-28 23:08:52.639 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: awsbatch
+Jan-28 23:08:52.639 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'awsbatch'
+Jan-28 23:08:52.640 [main] DEBUG nextflow.processor.TaskProcessor - Creating process 'WRANGLE_FINAL_OUTPUTS_REDITOOLS_V1': maxForks=20; fair=false; array=0
+Jan-28 23:08:52.648 [main] DEBUG nextflow.Session - Workflow process names [dsl2]: WRANGLE_FINAL_OUTPUTS_REDITOOLS_V1, POSTPROCESS_REDITOOLS_V1_OUTPUTS, CALL_RE_EVENTS_REDITOOLS_V1
+Jan-28 23:08:52.651 [main] DEBUG nextflow.Session - Igniting dataflow network (4)
+Jan-28 23:08:52.679 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > CALL_RE_EVENTS_REDITOOLS_V1
+Jan-28 23:08:52.684 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > POSTPROCESS_REDITOOLS_V1_OUTPUTS
+Jan-28 23:08:52.685 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > WRANGLE_FINAL_OUTPUTS_REDITOOLS_V1
+Jan-28 23:08:52.689 [main] DEBUG nextflow.script.ScriptRunner - Parsed script files:
+  Script_bcef16dc3de4de46: /home/ec2-user/repos/RedDisco/nextflow/modules/postprocess_reditools_v1_outputs.nf
+  Script_269c8e1bcab70642: /home/ec2-user/repos/RedDisco/nextflow/modules/call_re_events_reditools_v1.nf
+  Script_fabe173f544fc5cf: /home/ec2-user/repos/RedDisco/nextflow/modules/wrangle_final_outputs_reditools_v1.nf
+  Script_462f37ff69635515: /home/ec2-user/repos/RedDisco/nextflow/main.nf
+Jan-28 23:08:52.689 [main] DEBUG nextflow.script.ScriptRunner - > Awaiting termination 
+Jan-28 23:08:52.689 [main] DEBUG nextflow.Session - Session await
+Jan-28 23:08:53.382 [Actor Thread 5] INFO  nextflow.processor.TaskProcessor - [1d/44750c] Cached process > CALL_RE_EVENTS_REDITOOLS_V1 (BICR10-siNT-R2)
+Jan-28 23:08:53.390 [Actor Thread 1] INFO  nextflow.processor.TaskProcessor - [bb/ab0b0d] Cached process > CALL_RE_EVENTS_REDITOOLS_V1 (BICR10-siNT-R1)
+Jan-28 23:08:53.610 [Actor Thread 1] DEBUG nextflow.util.ThreadPoolBuilder - Creating thread pool 'PublishDir' minSize=10; maxSize=10; workQueue=LinkedBlockingQueue[-1]; allowCoreThreadTimeout=false
+Jan-28 23:08:53.878 [Actor Thread 1] INFO  nextflow.processor.TaskProcessor - [6e/3f2d4c] Cached process > CALL_RE_EVENTS_REDITOOLS_V1 (BICR10-sip150-R1)
+Jan-28 23:08:53.988 [Actor Thread 6] INFO  nextflow.processor.TaskProcessor - [1f/1c04e4] Cached process > CALL_RE_EVENTS_REDITOOLS_V1 (BICR10-sip150-R2)
+Jan-28 23:08:54.190 [Actor Thread 1] INFO  nextflow.processor.TaskProcessor - [23/e3afbc] Cached process > CALL_RE_EVENTS_REDITOOLS_V1 (ORL-207-siNT-R1)
+Jan-28 23:08:54.261 [Actor Thread 6] INFO  nextflow.processor.TaskProcessor - [43/601eb9] Cached process > CALL_RE_EVENTS_REDITOOLS_V1 (ORL-207-siNT-R2)
+Jan-28 23:08:54.476 [Actor Thread 1] INFO  nextflow.processor.TaskProcessor - [51/9e4d72] Cached process > CALL_RE_EVENTS_REDITOOLS_V1 (ORL-207-sip150-R1)
+Jan-28 23:08:54.549 [Actor Thread 7] INFO  nextflow.processor.TaskProcessor - [57/4a7ed4] Cached process > CALL_RE_EVENTS_REDITOOLS_V1 (ORL-207-sip150-R2)
+Jan-28 23:08:54.799 [Actor Thread 4] INFO  nextflow.processor.TaskProcessor - [73/887c29] Cached process > CALL_RE_EVENTS_REDITOOLS_V1 (SCC9-siNT-R1)
+Jan-28 23:08:54.912 [Actor Thread 1] INFO  nextflow.processor.TaskProcessor - [66/de269a] Cached process > CALL_RE_EVENTS_REDITOOLS_V1 (SCC9-siNT-R2)
+Jan-28 23:08:55.160 [Actor Thread 4] INFO  nextflow.processor.TaskProcessor - [18/df662f] Cached process > CALL_RE_EVENTS_REDITOOLS_V1 (SCC9-sip150-R1)
+Jan-28 23:08:55.287 [Actor Thread 7] INFO  nextflow.processor.TaskProcessor - [fa/77a162] Cached process > CALL_RE_EVENTS_REDITOOLS_V1 (SCC9-sip150-R2)
+Jan-28 23:08:55.394 [AWSBatch-executor-2] DEBUG n.c.aws.batch.AwsBatchTaskHandler - [AWS BATCH] Process `POSTPROCESS_REDITOOLS_V1_OUTPUTS (BICR10-siNT-R2)` submitted > job=5c7107c1-b1d5-40bf-b9cf-2ca5da984fbc; work-dir=s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/e4/8a75f81b8f23a8948a683c47665a35
+Jan-28 23:08:55.395 [AWSBatch-executor-2] INFO  nextflow.Session - [e4/8a75f8] Submitted process > POSTPROCESS_REDITOOLS_V1_OUTPUTS (BICR10-siNT-R2)
+Jan-28 23:08:55.396 [AWSBatch-executor-3] DEBUG n.c.aws.batch.AwsBatchTaskHandler - [AWS BATCH] Process `POSTPROCESS_REDITOOLS_V1_OUTPUTS (BICR10-sip150-R2)` submitted > job=57ae70dc-0ff4-4a9c-a138-75b40097cbc4; work-dir=s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/86/647415e19b717537e112efa6e7c6ba
+Jan-28 23:08:55.397 [AWSBatch-executor-3] INFO  nextflow.Session - [86/647415] Submitted process > POSTPROCESS_REDITOOLS_V1_OUTPUTS (BICR10-sip150-R2)
+Jan-28 23:08:55.398 [AWSBatch-executor-1] DEBUG n.c.aws.batch.AwsBatchTaskHandler - [AWS BATCH] Process `POSTPROCESS_REDITOOLS_V1_OUTPUTS (BICR10-siNT-R1)` submitted > job=81d57387-a712-4497-8112-38c8734f6210; work-dir=s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/1e/a09c7ef19c63521e158241927461de
+Jan-28 23:08:55.398 [AWSBatch-executor-1] INFO  nextflow.Session - [1e/a09c7e] Submitted process > POSTPROCESS_REDITOOLS_V1_OUTPUTS (BICR10-siNT-R1)
+Jan-28 23:08:55.403 [AWSBatch-executor-4] DEBUG n.c.aws.batch.AwsBatchTaskHandler - [AWS BATCH] Process `POSTPROCESS_REDITOOLS_V1_OUTPUTS (BICR10-sip150-R1)` submitted > job=d4ac0712-e61d-409f-987b-c2953e3c7b07; work-dir=s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/73/20b002d29418024eedba606d041716
+Jan-28 23:08:55.404 [AWSBatch-executor-4] INFO  nextflow.Session - [73/20b002] Submitted process > POSTPROCESS_REDITOOLS_V1_OUTPUTS (BICR10-sip150-R1)
+Jan-28 23:08:55.840 [AWSBatch-executor-9] DEBUG n.c.aws.batch.AwsBatchTaskHandler - [AWS BATCH] Process `POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-siNT-R2)` submitted > job=cdcaf5ad-e610-4a0f-8c48-f26cc7d058d5; work-dir=s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/e0/92c22b458bfcfdf2d4c8bda2191ec9
+Jan-28 23:08:55.841 [AWSBatch-executor-9] INFO  nextflow.Session - [e0/92c22b] Submitted process > POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-siNT-R2)
+Jan-28 23:08:56.037 [AWSBatch-executor-7] DEBUG n.c.aws.batch.AwsBatchTaskHandler - [AWS BATCH] Process `POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-siNT-R1)` submitted > job=df31bf0b-118a-4e43-80b4-7fcb1c4509ca; work-dir=s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/91/65bf591f1a1e182eaed0db02833d37
+Jan-28 23:08:56.037 [AWSBatch-executor-7] INFO  nextflow.Session - [91/65bf59] Submitted process > POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-siNT-R1)
+Jan-28 23:08:56.147 [AWSBatch-executor-6] DEBUG n.c.aws.batch.AwsBatchTaskHandler - [AWS BATCH] Process `POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-sip150-R1)` submitted > job=a61941e2-f368-4d89-85cd-c76744e50d83; work-dir=s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/c3/5803b9406687997d68b60c13396f40
+Jan-28 23:08:56.147 [AWSBatch-executor-6] INFO  nextflow.Session - [c3/5803b9] Submitted process > POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-sip150-R1)
+Jan-28 23:08:56.428 [AWSBatch-executor-2] DEBUG n.c.aws.batch.AwsBatchTaskHandler - [AWS BATCH] Process `POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-sip150-R2)` submitted > job=ab1197e3-a479-4b37-b419-7108b9e55a1e; work-dir=s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/1a/6a444002ac49f2238b15267a298b46
+Jan-28 23:08:56.429 [AWSBatch-executor-2] INFO  nextflow.Session - [1a/6a4440] Submitted process > POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-sip150-R2)
+Jan-28 23:08:56.547 [AWSBatch-executor-1] DEBUG n.c.aws.batch.AwsBatchTaskHandler - [AWS BATCH] Process `POSTPROCESS_REDITOOLS_V1_OUTPUTS (SCC9-siNT-R1)` submitted > job=73149046-cdde-455d-9d82-11af3b451cdf; work-dir=s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/39/ac76dd5ad6f15ccf6b6da02d4e8a8e
+Jan-28 23:08:56.547 [AWSBatch-executor-1] INFO  nextflow.Session - [39/ac76dd] Submitted process > POSTPROCESS_REDITOOLS_V1_OUTPUTS (SCC9-siNT-R1)
+Jan-28 23:08:56.824 [AWSBatch-executor-10] DEBUG n.c.aws.batch.AwsBatchTaskHandler - [AWS BATCH] Process `POSTPROCESS_REDITOOLS_V1_OUTPUTS (SCC9-siNT-R2)` submitted > job=d42e66bf-2529-4529-a918-e89f3996ac00; work-dir=s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/57/7a39804329182ecbece298fe1bd3fa
+Jan-28 23:08:56.829 [AWSBatch-executor-10] INFO  nextflow.Session - [57/7a3980] Submitted process > POSTPROCESS_REDITOOLS_V1_OUTPUTS (SCC9-siNT-R2)
+Jan-28 23:08:56.953 [AWSBatch-executor-8] DEBUG n.c.aws.batch.AwsBatchTaskHandler - [AWS BATCH] Process `POSTPROCESS_REDITOOLS_V1_OUTPUTS (SCC9-sip150-R1)` submitted > job=6c87c761-e794-4167-b3d5-668c0a29d1e0; work-dir=s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/27/e973b0ea3507daa248b16c4203badb
+Jan-28 23:08:56.954 [AWSBatch-executor-8] INFO  nextflow.Session - [27/e973b0] Submitted process > POSTPROCESS_REDITOOLS_V1_OUTPUTS (SCC9-sip150-R1)
+Jan-28 23:08:57.168 [AWSBatch-executor-5] DEBUG n.c.aws.batch.AwsBatchTaskHandler - [AWS BATCH] Process `POSTPROCESS_REDITOOLS_V1_OUTPUTS (SCC9-sip150-R2)` submitted > job=a58522f4-5697-4be6-87b8-bd09c9665486; work-dir=s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/1d/88a16b2a052e00f7095bb0889305ac
+Jan-28 23:08:57.168 [AWSBatch-executor-5] INFO  nextflow.Session - [1d/88a16b] Submitted process > POSTPROCESS_REDITOOLS_V1_OUTPUTS (SCC9-sip150-R2)
+Jan-28 23:14:01.863 [Task monitor] DEBUG n.processor.TaskPollingMonitor - !! executor awsbatch > tasks to be completed: 12 -- submitted tasks are shown below
+~> TaskHandler[id: 5; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (BICR10-siNT-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/e4/8a75f81b8f23a8948a683c47665a35]
+~> TaskHandler[id: 13; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (BICR10-sip150-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/86/647415e19b717537e112efa6e7c6ba]
+~> TaskHandler[id: 4; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (BICR10-siNT-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/1e/a09c7ef19c63521e158241927461de]
+~> TaskHandler[id: 8; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (BICR10-sip150-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/73/20b002d29418024eedba606d041716]
+~> TaskHandler[id: 18; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-siNT-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/e0/92c22b458bfcfdf2d4c8bda2191ec9]
+~> TaskHandler[id: 14; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-siNT-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/91/65bf591f1a1e182eaed0db02833d37]
+~> TaskHandler[id: 19; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-sip150-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/c3/5803b9406687997d68b60c13396f40]
+~> TaskHandler[id: 20; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-sip150-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/1a/6a444002ac49f2238b15267a298b46]
+~> TaskHandler[id: 21; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (SCC9-siNT-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/39/ac76dd5ad6f15ccf6b6da02d4e8a8e]
+~> TaskHandler[id: 22; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (SCC9-siNT-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/57/7a39804329182ecbece298fe1bd3fa]
+.. remaining tasks omitted.
+Jan-28 23:19:01.874 [Task monitor] DEBUG n.processor.TaskPollingMonitor - !! executor awsbatch > tasks to be completed: 12 -- submitted tasks are shown below
+~> TaskHandler[id: 5; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (BICR10-siNT-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/e4/8a75f81b8f23a8948a683c47665a35]
+~> TaskHandler[id: 13; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (BICR10-sip150-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/86/647415e19b717537e112efa6e7c6ba]
+~> TaskHandler[id: 4; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (BICR10-siNT-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/1e/a09c7ef19c63521e158241927461de]
+~> TaskHandler[id: 8; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (BICR10-sip150-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/73/20b002d29418024eedba606d041716]
+~> TaskHandler[id: 18; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-siNT-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/e0/92c22b458bfcfdf2d4c8bda2191ec9]
+~> TaskHandler[id: 14; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-siNT-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/91/65bf591f1a1e182eaed0db02833d37]
+~> TaskHandler[id: 19; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-sip150-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/c3/5803b9406687997d68b60c13396f40]
+~> TaskHandler[id: 20; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-sip150-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/1a/6a444002ac49f2238b15267a298b46]
+~> TaskHandler[id: 21; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (SCC9-siNT-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/39/ac76dd5ad6f15ccf6b6da02d4e8a8e]
+~> TaskHandler[id: 22; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (SCC9-siNT-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/57/7a39804329182ecbece298fe1bd3fa]
+.. remaining tasks omitted.
+Jan-28 23:24:01.891 [Task monitor] DEBUG n.processor.TaskPollingMonitor - !! executor awsbatch > tasks to be completed: 12 -- submitted tasks are shown below
+~> TaskHandler[id: 5; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (BICR10-siNT-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/e4/8a75f81b8f23a8948a683c47665a35]
+~> TaskHandler[id: 13; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (BICR10-sip150-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/86/647415e19b717537e112efa6e7c6ba]
+~> TaskHandler[id: 4; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (BICR10-siNT-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/1e/a09c7ef19c63521e158241927461de]
+~> TaskHandler[id: 8; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (BICR10-sip150-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/73/20b002d29418024eedba606d041716]
+~> TaskHandler[id: 18; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-siNT-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/e0/92c22b458bfcfdf2d4c8bda2191ec9]
+~> TaskHandler[id: 14; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-siNT-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/91/65bf591f1a1e182eaed0db02833d37]
+~> TaskHandler[id: 19; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-sip150-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/c3/5803b9406687997d68b60c13396f40]
+~> TaskHandler[id: 20; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-sip150-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/1a/6a444002ac49f2238b15267a298b46]
+~> TaskHandler[id: 21; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (SCC9-siNT-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/39/ac76dd5ad6f15ccf6b6da02d4e8a8e]
+~> TaskHandler[id: 22; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (SCC9-siNT-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/57/7a39804329182ecbece298fe1bd3fa]
+.. remaining tasks omitted.
+Jan-28 23:29:01.902 [Task monitor] DEBUG n.processor.TaskPollingMonitor - !! executor awsbatch > tasks to be completed: 12 -- submitted tasks are shown below
+~> TaskHandler[id: 5; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (BICR10-siNT-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/e4/8a75f81b8f23a8948a683c47665a35]
+~> TaskHandler[id: 13; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (BICR10-sip150-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/86/647415e19b717537e112efa6e7c6ba]
+~> TaskHandler[id: 4; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (BICR10-siNT-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/1e/a09c7ef19c63521e158241927461de]
+~> TaskHandler[id: 8; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (BICR10-sip150-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/73/20b002d29418024eedba606d041716]
+~> TaskHandler[id: 18; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-siNT-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/e0/92c22b458bfcfdf2d4c8bda2191ec9]
+~> TaskHandler[id: 14; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-siNT-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/91/65bf591f1a1e182eaed0db02833d37]
+~> TaskHandler[id: 19; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-sip150-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/c3/5803b9406687997d68b60c13396f40]
+~> TaskHandler[id: 20; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-sip150-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/1a/6a444002ac49f2238b15267a298b46]
+~> TaskHandler[id: 21; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (SCC9-siNT-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/39/ac76dd5ad6f15ccf6b6da02d4e8a8e]
+~> TaskHandler[id: 22; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (SCC9-siNT-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/57/7a39804329182ecbece298fe1bd3fa]
+.. remaining tasks omitted.
+Jan-28 23:34:01.915 [Task monitor] DEBUG n.processor.TaskPollingMonitor - !! executor awsbatch > tasks to be completed: 12 -- submitted tasks are shown below
+~> TaskHandler[id: 5; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (BICR10-siNT-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/e4/8a75f81b8f23a8948a683c47665a35]
+~> TaskHandler[id: 13; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (BICR10-sip150-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/86/647415e19b717537e112efa6e7c6ba]
+~> TaskHandler[id: 4; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (BICR10-siNT-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/1e/a09c7ef19c63521e158241927461de]
+~> TaskHandler[id: 8; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (BICR10-sip150-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/73/20b002d29418024eedba606d041716]
+~> TaskHandler[id: 18; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-siNT-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/e0/92c22b458bfcfdf2d4c8bda2191ec9]
+~> TaskHandler[id: 14; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-siNT-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/91/65bf591f1a1e182eaed0db02833d37]
+~> TaskHandler[id: 19; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-sip150-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/c3/5803b9406687997d68b60c13396f40]
+~> TaskHandler[id: 20; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-sip150-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/1a/6a444002ac49f2238b15267a298b46]
+~> TaskHandler[id: 21; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (SCC9-siNT-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/39/ac76dd5ad6f15ccf6b6da02d4e8a8e]
+~> TaskHandler[id: 22; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (SCC9-siNT-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/57/7a39804329182ecbece298fe1bd3fa]
+.. remaining tasks omitted.
+Jan-28 23:37:32.057 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 13; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (BICR10-sip150-R2); status: COMPLETED; exit: 0; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/86/647415e19b717537e112efa6e7c6ba]
+Jan-28 23:37:32.059 [Task monitor] DEBUG nextflow.util.ThreadPoolBuilder - Creating thread pool 'TaskFinalizer' minSize=10; maxSize=10; workQueue=LinkedBlockingQueue[-1]; allowCoreThreadTimeout=false
+Jan-28 23:37:32.613 [AWSBatch-executor-177] DEBUG n.c.aws.batch.AwsBatchTaskHandler - [AWS BATCH] Process `WRANGLE_FINAL_OUTPUTS_REDITOOLS_V1 (BICR10-sip150-R2)` submitted > job=a8e96336-b9fc-40d1-9a04-cf324797292c; work-dir=s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/7d/7a7986746c92f43e9f79553c73bac8
+Jan-28 23:37:32.614 [AWSBatch-executor-177] INFO  nextflow.Session - [7d/7a7986] Submitted process > WRANGLE_FINAL_OUTPUTS_REDITOOLS_V1 (BICR10-sip150-R2)
+Jan-28 23:38:52.022 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 4; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (BICR10-siNT-R1); status: COMPLETED; exit: 0; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/1e/a09c7ef19c63521e158241927461de]
+Jan-28 23:38:52.434 [AWSBatch-executor-187] DEBUG n.c.aws.batch.AwsBatchTaskHandler - [AWS BATCH] Process `WRANGLE_FINAL_OUTPUTS_REDITOOLS_V1 (BICR10-siNT-R1)` submitted > job=a7577413-ed13-449b-bc39-d8de69f36cb3; work-dir=s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/62/84739f3df2cc67f6552a19971886cb
+Jan-28 23:38:52.435 [AWSBatch-executor-187] INFO  nextflow.Session - [62/84739f] Submitted process > WRANGLE_FINAL_OUTPUTS_REDITOOLS_V1 (BICR10-siNT-R1)
+Jan-28 23:39:01.929 [Task monitor] DEBUG n.processor.TaskPollingMonitor - !! executor awsbatch > tasks to be completed: 12 -- submitted tasks are shown below
+~> TaskHandler[id: 5; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (BICR10-siNT-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/e4/8a75f81b8f23a8948a683c47665a35]
+~> TaskHandler[id: 8; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (BICR10-sip150-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/73/20b002d29418024eedba606d041716]
+~> TaskHandler[id: 18; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-siNT-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/e0/92c22b458bfcfdf2d4c8bda2191ec9]
+~> TaskHandler[id: 14; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-siNT-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/91/65bf591f1a1e182eaed0db02833d37]
+~> TaskHandler[id: 19; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-sip150-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/c3/5803b9406687997d68b60c13396f40]
+~> TaskHandler[id: 20; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-sip150-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/1a/6a444002ac49f2238b15267a298b46]
+~> TaskHandler[id: 21; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (SCC9-siNT-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/39/ac76dd5ad6f15ccf6b6da02d4e8a8e]
+~> TaskHandler[id: 22; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (SCC9-siNT-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/57/7a39804329182ecbece298fe1bd3fa]
+~> TaskHandler[id: 23; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (SCC9-sip150-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/27/e973b0ea3507daa248b16c4203badb]
+~> TaskHandler[id: 24; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (SCC9-sip150-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/1d/88a16b2a052e00f7095bb0889305ac]
+.. remaining tasks omitted.
+Jan-28 23:39:12.020 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 26; name: WRANGLE_FINAL_OUTPUTS_REDITOOLS_V1 (BICR10-siNT-R1); status: COMPLETED; exit: 0; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/62/84739f3df2cc67f6552a19971886cb]
+Jan-28 23:44:01.942 [Task monitor] DEBUG n.processor.TaskPollingMonitor - !! executor awsbatch > tasks to be completed: 11 -- submitted tasks are shown below
+~> TaskHandler[id: 5; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (BICR10-siNT-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/e4/8a75f81b8f23a8948a683c47665a35]
+~> TaskHandler[id: 8; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (BICR10-sip150-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/73/20b002d29418024eedba606d041716]
+~> TaskHandler[id: 18; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-siNT-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/e0/92c22b458bfcfdf2d4c8bda2191ec9]
+~> TaskHandler[id: 14; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-siNT-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/91/65bf591f1a1e182eaed0db02833d37]
+~> TaskHandler[id: 19; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-sip150-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/c3/5803b9406687997d68b60c13396f40]
+~> TaskHandler[id: 20; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-sip150-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/1a/6a444002ac49f2238b15267a298b46]
+~> TaskHandler[id: 21; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (SCC9-siNT-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/39/ac76dd5ad6f15ccf6b6da02d4e8a8e]
+~> TaskHandler[id: 22; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (SCC9-siNT-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/57/7a39804329182ecbece298fe1bd3fa]
+~> TaskHandler[id: 23; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (SCC9-sip150-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/27/e973b0ea3507daa248b16c4203badb]
+~> TaskHandler[id: 24; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (SCC9-sip150-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/1d/88a16b2a052e00f7095bb0889305ac]
+Jan-28 23:49:01.956 [Task monitor] DEBUG n.processor.TaskPollingMonitor - !! executor awsbatch > tasks to be completed: 11 -- submitted tasks are shown below
+~> TaskHandler[id: 5; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (BICR10-siNT-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/e4/8a75f81b8f23a8948a683c47665a35]
+~> TaskHandler[id: 8; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (BICR10-sip150-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/73/20b002d29418024eedba606d041716]
+~> TaskHandler[id: 18; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-siNT-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/e0/92c22b458bfcfdf2d4c8bda2191ec9]
+~> TaskHandler[id: 14; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-siNT-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/91/65bf591f1a1e182eaed0db02833d37]
+~> TaskHandler[id: 19; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-sip150-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/c3/5803b9406687997d68b60c13396f40]
+~> TaskHandler[id: 20; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-sip150-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/1a/6a444002ac49f2238b15267a298b46]
+~> TaskHandler[id: 21; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (SCC9-siNT-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/39/ac76dd5ad6f15ccf6b6da02d4e8a8e]
+~> TaskHandler[id: 22; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (SCC9-siNT-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/57/7a39804329182ecbece298fe1bd3fa]
+~> TaskHandler[id: 23; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (SCC9-sip150-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/27/e973b0ea3507daa248b16c4203badb]
+~> TaskHandler[id: 24; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (SCC9-sip150-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/1d/88a16b2a052e00f7095bb0889305ac]
+Jan-28 23:52:22.060 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 22; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (SCC9-siNT-R2); status: COMPLETED; exit: 0; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/57/7a39804329182ecbece298fe1bd3fa]
+Jan-28 23:52:22.642 [AWSBatch-executor-270] DEBUG n.c.aws.batch.AwsBatchTaskHandler - [AWS BATCH] Process `WRANGLE_FINAL_OUTPUTS_REDITOOLS_V1 (SCC9-siNT-R2)` submitted > job=7189e4d6-24a7-4ba4-917d-e34b74c8918c; work-dir=s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/9a/a4820583f194bdab00e7fd96fdd037
+Jan-28 23:52:22.647 [AWSBatch-executor-270] INFO  nextflow.Session - [9a/a48205] Submitted process > WRANGLE_FINAL_OUTPUTS_REDITOOLS_V1 (SCC9-siNT-R2)
+Jan-28 23:52:42.046 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 27; name: WRANGLE_FINAL_OUTPUTS_REDITOOLS_V1 (SCC9-siNT-R2); status: COMPLETED; exit: 0; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/9a/a4820583f194bdab00e7fd96fdd037]
+Jan-28 23:53:12.049 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 24; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (SCC9-sip150-R2); status: COMPLETED; exit: 0; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/1d/88a16b2a052e00f7095bb0889305ac]
+Jan-28 23:53:12.466 [AWSBatch-executor-277] DEBUG n.c.aws.batch.AwsBatchTaskHandler - [AWS BATCH] Process `WRANGLE_FINAL_OUTPUTS_REDITOOLS_V1 (SCC9-sip150-R2)` submitted > job=ad3770ec-4a95-4b43-8d27-4f785193ecf7; work-dir=s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/d1/5517c9dc0b1c16885c130d52a2d240
+Jan-28 23:53:12.467 [AWSBatch-executor-277] INFO  nextflow.Session - [d1/5517c9] Submitted process > WRANGLE_FINAL_OUTPUTS_REDITOOLS_V1 (SCC9-sip150-R2)
+Jan-28 23:53:32.050 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 28; name: WRANGLE_FINAL_OUTPUTS_REDITOOLS_V1 (SCC9-sip150-R2); status: COMPLETED; exit: 0; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/d1/5517c9dc0b1c16885c130d52a2d240]
+Jan-28 23:54:01.964 [Task monitor] DEBUG n.processor.TaskPollingMonitor - !! executor awsbatch > tasks to be completed: 9 -- submitted tasks are shown below
+~> TaskHandler[id: 5; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (BICR10-siNT-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/e4/8a75f81b8f23a8948a683c47665a35]
+~> TaskHandler[id: 8; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (BICR10-sip150-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/73/20b002d29418024eedba606d041716]
+~> TaskHandler[id: 18; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-siNT-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/e0/92c22b458bfcfdf2d4c8bda2191ec9]
+~> TaskHandler[id: 14; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-siNT-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/91/65bf591f1a1e182eaed0db02833d37]
+~> TaskHandler[id: 19; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-sip150-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/c3/5803b9406687997d68b60c13396f40]
+~> TaskHandler[id: 20; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-sip150-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/1a/6a444002ac49f2238b15267a298b46]
+~> TaskHandler[id: 21; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (SCC9-siNT-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/39/ac76dd5ad6f15ccf6b6da02d4e8a8e]
+~> TaskHandler[id: 23; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (SCC9-sip150-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/27/e973b0ea3507daa248b16c4203badb]
+~> TaskHandler[id: 25; name: WRANGLE_FINAL_OUTPUTS_REDITOOLS_V1 (BICR10-sip150-R2); status: SUBMITTED; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/7d/7a7986746c92f43e9f79553c73bac8]
+Jan-28 23:54:22.067 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 23; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (SCC9-sip150-R1); status: COMPLETED; exit: 0; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/27/e973b0ea3507daa248b16c4203badb]
+Jan-28 23:54:22.613 [AWSBatch-executor-285] DEBUG n.c.aws.batch.AwsBatchTaskHandler - [AWS BATCH] Process `WRANGLE_FINAL_OUTPUTS_REDITOOLS_V1 (SCC9-sip150-R1)` submitted > job=8151261e-dc76-4bb8-a2df-f30f1eab7e32; work-dir=s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/38/4654f78df5f45676aaa18a0d63a3f5
+Jan-28 23:54:22.616 [AWSBatch-executor-285] INFO  nextflow.Session - [38/4654f7] Submitted process > WRANGLE_FINAL_OUTPUTS_REDITOOLS_V1 (SCC9-sip150-R1)
+Jan-28 23:54:42.075 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 29; name: WRANGLE_FINAL_OUTPUTS_REDITOOLS_V1 (SCC9-sip150-R1); status: COMPLETED; exit: 0; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/38/4654f78df5f45676aaa18a0d63a3f5]
+Jan-28 23:57:42.045 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 25; name: WRANGLE_FINAL_OUTPUTS_REDITOOLS_V1 (BICR10-sip150-R2); status: COMPLETED; exit: 0; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/7d/7a7986746c92f43e9f79553c73bac8]
+Jan-28 23:59:01.970 [Task monitor] DEBUG n.processor.TaskPollingMonitor - !! executor awsbatch > tasks to be completed: 7 -- submitted tasks are shown below
+~> TaskHandler[id: 5; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (BICR10-siNT-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/e4/8a75f81b8f23a8948a683c47665a35]
+~> TaskHandler[id: 8; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (BICR10-sip150-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/73/20b002d29418024eedba606d041716]
+~> TaskHandler[id: 18; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-siNT-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/e0/92c22b458bfcfdf2d4c8bda2191ec9]
+~> TaskHandler[id: 14; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-siNT-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/91/65bf591f1a1e182eaed0db02833d37]
+~> TaskHandler[id: 19; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-sip150-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/c3/5803b9406687997d68b60c13396f40]
+~> TaskHandler[id: 20; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-sip150-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/1a/6a444002ac49f2238b15267a298b46]
+~> TaskHandler[id: 21; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (SCC9-siNT-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/39/ac76dd5ad6f15ccf6b6da02d4e8a8e]
+Jan-29 00:04:01.977 [Task monitor] DEBUG n.processor.TaskPollingMonitor - !! executor awsbatch > tasks to be completed: 7 -- submitted tasks are shown below
+~> TaskHandler[id: 5; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (BICR10-siNT-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/e4/8a75f81b8f23a8948a683c47665a35]
+~> TaskHandler[id: 8; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (BICR10-sip150-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/73/20b002d29418024eedba606d041716]
+~> TaskHandler[id: 18; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-siNT-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/e0/92c22b458bfcfdf2d4c8bda2191ec9]
+~> TaskHandler[id: 14; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-siNT-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/91/65bf591f1a1e182eaed0db02833d37]
+~> TaskHandler[id: 19; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-sip150-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/c3/5803b9406687997d68b60c13396f40]
+~> TaskHandler[id: 20; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-sip150-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/1a/6a444002ac49f2238b15267a298b46]
+~> TaskHandler[id: 21; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (SCC9-siNT-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/39/ac76dd5ad6f15ccf6b6da02d4e8a8e]
+Jan-29 00:09:01.988 [Task monitor] DEBUG n.processor.TaskPollingMonitor - !! executor awsbatch > tasks to be completed: 7 -- submitted tasks are shown below
+~> TaskHandler[id: 5; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (BICR10-siNT-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/e4/8a75f81b8f23a8948a683c47665a35]
+~> TaskHandler[id: 8; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (BICR10-sip150-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/73/20b002d29418024eedba606d041716]
+~> TaskHandler[id: 18; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-siNT-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/e0/92c22b458bfcfdf2d4c8bda2191ec9]
+~> TaskHandler[id: 14; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-siNT-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/91/65bf591f1a1e182eaed0db02833d37]
+~> TaskHandler[id: 19; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-sip150-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/c3/5803b9406687997d68b60c13396f40]
+~> TaskHandler[id: 20; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-sip150-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/1a/6a444002ac49f2238b15267a298b46]
+~> TaskHandler[id: 21; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (SCC9-siNT-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/39/ac76dd5ad6f15ccf6b6da02d4e8a8e]
+Jan-29 00:09:12.092 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 21; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (SCC9-siNT-R1); status: COMPLETED; exit: 0; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/39/ac76dd5ad6f15ccf6b6da02d4e8a8e]
+Jan-29 00:09:12.516 [AWSBatch-executor-376] DEBUG n.c.aws.batch.AwsBatchTaskHandler - [AWS BATCH] Process `WRANGLE_FINAL_OUTPUTS_REDITOOLS_V1 (SCC9-siNT-R1)` submitted > job=9aed402b-2f00-4a45-9b49-5c616940439d; work-dir=s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/2e/11079a5595286bf1e8aa2c81faceff
+Jan-29 00:09:12.517 [AWSBatch-executor-376] INFO  nextflow.Session - [2e/11079a] Submitted process > WRANGLE_FINAL_OUTPUTS_REDITOOLS_V1 (SCC9-siNT-R1)
+Jan-29 00:09:32.076 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 30; name: WRANGLE_FINAL_OUTPUTS_REDITOOLS_V1 (SCC9-siNT-R1); status: COMPLETED; exit: 0; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/2e/11079a5595286bf1e8aa2c81faceff]
+Jan-29 00:14:02.001 [Task monitor] DEBUG n.processor.TaskPollingMonitor - !! executor awsbatch > tasks to be completed: 6 -- submitted tasks are shown below
+~> TaskHandler[id: 5; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (BICR10-siNT-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/e4/8a75f81b8f23a8948a683c47665a35]
+~> TaskHandler[id: 8; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (BICR10-sip150-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/73/20b002d29418024eedba606d041716]
+~> TaskHandler[id: 18; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-siNT-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/e0/92c22b458bfcfdf2d4c8bda2191ec9]
+~> TaskHandler[id: 14; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-siNT-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/91/65bf591f1a1e182eaed0db02833d37]
+~> TaskHandler[id: 19; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-sip150-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/c3/5803b9406687997d68b60c13396f40]
+~> TaskHandler[id: 20; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-sip150-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/1a/6a444002ac49f2238b15267a298b46]
+Jan-29 00:16:42.111 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 8; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (BICR10-sip150-R1); status: COMPLETED; exit: 0; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/73/20b002d29418024eedba606d041716]
+Jan-29 00:16:42.542 [AWSBatch-executor-423] DEBUG n.c.aws.batch.AwsBatchTaskHandler - [AWS BATCH] Process `WRANGLE_FINAL_OUTPUTS_REDITOOLS_V1 (BICR10-sip150-R1)` submitted > job=d7031dcf-bb9b-4b80-a4b4-18217fb283df; work-dir=s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/54/a58ad55d8d7ab9e30880ebfe53af69
+Jan-29 00:16:42.543 [AWSBatch-executor-423] INFO  nextflow.Session - [54/a58ad5] Submitted process > WRANGLE_FINAL_OUTPUTS_REDITOOLS_V1 (BICR10-sip150-R1)
+Jan-29 00:17:02.098 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 31; name: WRANGLE_FINAL_OUTPUTS_REDITOOLS_V1 (BICR10-sip150-R1); status: COMPLETED; exit: 0; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/54/a58ad55d8d7ab9e30880ebfe53af69]
+Jan-29 00:17:52.093 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 5; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (BICR10-siNT-R2); status: COMPLETED; exit: 0; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/e4/8a75f81b8f23a8948a683c47665a35]
+Jan-29 00:17:52.491 [AWSBatch-executor-432] DEBUG n.c.aws.batch.AwsBatchTaskHandler - [AWS BATCH] Process `WRANGLE_FINAL_OUTPUTS_REDITOOLS_V1 (BICR10-siNT-R2)` submitted > job=274c0537-0aa1-4fbc-a83f-d2f41961ec02; work-dir=s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/b7/76d74510339810a9853d96d3b31cc9
+Jan-29 00:17:52.500 [AWSBatch-executor-432] INFO  nextflow.Session - [b7/76d745] Submitted process > WRANGLE_FINAL_OUTPUTS_REDITOOLS_V1 (BICR10-siNT-R2)
+Jan-29 00:18:12.083 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 32; name: WRANGLE_FINAL_OUTPUTS_REDITOOLS_V1 (BICR10-siNT-R2); status: COMPLETED; exit: 0; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/b7/76d74510339810a9853d96d3b31cc9]
+Jan-29 00:19:02.010 [Task monitor] DEBUG n.processor.TaskPollingMonitor - !! executor awsbatch > tasks to be completed: 4 -- submitted tasks are shown below
+~> TaskHandler[id: 18; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-siNT-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/e0/92c22b458bfcfdf2d4c8bda2191ec9]
+~> TaskHandler[id: 14; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-siNT-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/91/65bf591f1a1e182eaed0db02833d37]
+~> TaskHandler[id: 19; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-sip150-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/c3/5803b9406687997d68b60c13396f40]
+~> TaskHandler[id: 20; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-sip150-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/1a/6a444002ac49f2238b15267a298b46]
+Jan-29 00:24:02.017 [Task monitor] DEBUG n.processor.TaskPollingMonitor - !! executor awsbatch > tasks to be completed: 4 -- submitted tasks are shown below
+~> TaskHandler[id: 18; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-siNT-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/e0/92c22b458bfcfdf2d4c8bda2191ec9]
+~> TaskHandler[id: 14; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-siNT-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/91/65bf591f1a1e182eaed0db02833d37]
+~> TaskHandler[id: 19; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-sip150-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/c3/5803b9406687997d68b60c13396f40]
+~> TaskHandler[id: 20; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-sip150-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/1a/6a444002ac49f2238b15267a298b46]
+Jan-29 00:29:02.022 [Task monitor] DEBUG n.processor.TaskPollingMonitor - !! executor awsbatch > tasks to be completed: 4 -- submitted tasks are shown below
+~> TaskHandler[id: 18; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-siNT-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/e0/92c22b458bfcfdf2d4c8bda2191ec9]
+~> TaskHandler[id: 14; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-siNT-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/91/65bf591f1a1e182eaed0db02833d37]
+~> TaskHandler[id: 19; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-sip150-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/c3/5803b9406687997d68b60c13396f40]
+~> TaskHandler[id: 20; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-sip150-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/1a/6a444002ac49f2238b15267a298b46]
+Jan-29 00:34:02.029 [Task monitor] DEBUG n.processor.TaskPollingMonitor - !! executor awsbatch > tasks to be completed: 4 -- submitted tasks are shown below
+~> TaskHandler[id: 18; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-siNT-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/e0/92c22b458bfcfdf2d4c8bda2191ec9]
+~> TaskHandler[id: 14; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-siNT-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/91/65bf591f1a1e182eaed0db02833d37]
+~> TaskHandler[id: 19; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-sip150-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/c3/5803b9406687997d68b60c13396f40]
+~> TaskHandler[id: 20; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-sip150-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/1a/6a444002ac49f2238b15267a298b46]
+Jan-29 00:39:02.037 [Task monitor] DEBUG n.processor.TaskPollingMonitor - !! executor awsbatch > tasks to be completed: 4 -- submitted tasks are shown below
+~> TaskHandler[id: 18; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-siNT-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/e0/92c22b458bfcfdf2d4c8bda2191ec9]
+~> TaskHandler[id: 14; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-siNT-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/91/65bf591f1a1e182eaed0db02833d37]
+~> TaskHandler[id: 19; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-sip150-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/c3/5803b9406687997d68b60c13396f40]
+~> TaskHandler[id: 20; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-sip150-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/1a/6a444002ac49f2238b15267a298b46]
+Jan-29 00:44:02.044 [Task monitor] DEBUG n.processor.TaskPollingMonitor - !! executor awsbatch > tasks to be completed: 4 -- submitted tasks are shown below
+~> TaskHandler[id: 18; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-siNT-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/e0/92c22b458bfcfdf2d4c8bda2191ec9]
+~> TaskHandler[id: 14; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-siNT-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/91/65bf591f1a1e182eaed0db02833d37]
+~> TaskHandler[id: 19; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-sip150-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/c3/5803b9406687997d68b60c13396f40]
+~> TaskHandler[id: 20; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-sip150-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/1a/6a444002ac49f2238b15267a298b46]
+Jan-29 00:49:02.049 [Task monitor] DEBUG n.processor.TaskPollingMonitor - !! executor awsbatch > tasks to be completed: 4 -- submitted tasks are shown below
+~> TaskHandler[id: 18; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-siNT-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/e0/92c22b458bfcfdf2d4c8bda2191ec9]
+~> TaskHandler[id: 14; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-siNT-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/91/65bf591f1a1e182eaed0db02833d37]
+~> TaskHandler[id: 19; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-sip150-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/c3/5803b9406687997d68b60c13396f40]
+~> TaskHandler[id: 20; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-sip150-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/1a/6a444002ac49f2238b15267a298b46]
+Jan-29 00:54:02.062 [Task monitor] DEBUG n.processor.TaskPollingMonitor - !! executor awsbatch > tasks to be completed: 4 -- submitted tasks are shown below
+~> TaskHandler[id: 18; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-siNT-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/e0/92c22b458bfcfdf2d4c8bda2191ec9]
+~> TaskHandler[id: 14; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-siNT-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/91/65bf591f1a1e182eaed0db02833d37]
+~> TaskHandler[id: 19; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-sip150-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/c3/5803b9406687997d68b60c13396f40]
+~> TaskHandler[id: 20; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-sip150-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/1a/6a444002ac49f2238b15267a298b46]
+Jan-29 00:58:42.142 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 18; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-siNT-R2); status: COMPLETED; exit: 0; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/e0/92c22b458bfcfdf2d4c8bda2191ec9]
+Jan-29 00:58:42.172 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 19; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-sip150-R1); status: COMPLETED; exit: 0; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/c3/5803b9406687997d68b60c13396f40]
+Jan-29 00:58:42.572 [AWSBatch-executor-679] DEBUG n.c.aws.batch.AwsBatchTaskHandler - [AWS BATCH] Process `WRANGLE_FINAL_OUTPUTS_REDITOOLS_V1 (ORL-207-siNT-R2)` submitted > job=6177920e-e639-4dc5-b59d-122917f0a18e; work-dir=s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/f4/c0e23f5d0a8fd35a41a321af495718
+Jan-29 00:58:42.577 [AWSBatch-executor-679] INFO  nextflow.Session - [f4/c0e23f] Submitted process > WRANGLE_FINAL_OUTPUTS_REDITOOLS_V1 (ORL-207-siNT-R2)
+Jan-29 00:58:42.656 [AWSBatch-executor-680] DEBUG n.c.aws.batch.AwsBatchTaskHandler - [AWS BATCH] Process `WRANGLE_FINAL_OUTPUTS_REDITOOLS_V1 (ORL-207-sip150-R1)` submitted > job=cdab2aca-90d6-489a-bc03-ab0c85f5503c; work-dir=s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/61/4ea7853c1a0708fd908f45497d5446
+Jan-29 00:58:42.657 [AWSBatch-executor-680] INFO  nextflow.Session - [61/4ea785] Submitted process > WRANGLE_FINAL_OUTPUTS_REDITOOLS_V1 (ORL-207-sip150-R1)
+Jan-29 00:59:02.069 [Task monitor] DEBUG n.processor.TaskPollingMonitor - !! executor awsbatch > tasks to be completed: 4 -- submitted tasks are shown below
+~> TaskHandler[id: 14; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-siNT-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/91/65bf591f1a1e182eaed0db02833d37]
+~> TaskHandler[id: 20; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-sip150-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/1a/6a444002ac49f2238b15267a298b46]
+~> TaskHandler[id: 33; name: WRANGLE_FINAL_OUTPUTS_REDITOOLS_V1 (ORL-207-siNT-R2); status: SUBMITTED; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/f4/c0e23f5d0a8fd35a41a321af495718]
+~> TaskHandler[id: 34; name: WRANGLE_FINAL_OUTPUTS_REDITOOLS_V1 (ORL-207-sip150-R1); status: SUBMITTED; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/61/4ea7853c1a0708fd908f45497d5446]
+Jan-29 00:59:12.176 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 33; name: WRANGLE_FINAL_OUTPUTS_REDITOOLS_V1 (ORL-207-siNT-R2); status: COMPLETED; exit: 0; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/f4/c0e23f5d0a8fd35a41a321af495718]
+Jan-29 00:59:12.202 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 34; name: WRANGLE_FINAL_OUTPUTS_REDITOOLS_V1 (ORL-207-sip150-R1); status: COMPLETED; exit: 0; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/61/4ea7853c1a0708fd908f45497d5446]
+Jan-29 01:04:02.075 [Task monitor] DEBUG n.processor.TaskPollingMonitor - !! executor awsbatch > tasks to be completed: 2 -- submitted tasks are shown below
+~> TaskHandler[id: 14; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-siNT-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/91/65bf591f1a1e182eaed0db02833d37]
+~> TaskHandler[id: 20; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-sip150-R2); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/1a/6a444002ac49f2238b15267a298b46]
+Jan-29 01:04:12.144 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 20; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-sip150-R2); status: COMPLETED; exit: 0; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/1a/6a444002ac49f2238b15267a298b46]
+Jan-29 01:04:12.537 [AWSBatch-executor-710] DEBUG n.c.aws.batch.AwsBatchTaskHandler - [AWS BATCH] Process `WRANGLE_FINAL_OUTPUTS_REDITOOLS_V1 (ORL-207-sip150-R2)` submitted > job=6a982a2d-8eb1-44ef-b062-308a7653104e; work-dir=s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/11/96251705faa5d2e89f43bcb6cce4f9
+Jan-29 01:04:12.537 [AWSBatch-executor-710] INFO  nextflow.Session - [11/962517] Submitted process > WRANGLE_FINAL_OUTPUTS_REDITOOLS_V1 (ORL-207-sip150-R2)
+Jan-29 01:04:32.148 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 35; name: WRANGLE_FINAL_OUTPUTS_REDITOOLS_V1 (ORL-207-sip150-R2); status: COMPLETED; exit: 0; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/11/96251705faa5d2e89f43bcb6cce4f9]
+Jan-29 01:09:02.083 [Task monitor] DEBUG n.processor.TaskPollingMonitor - !! executor awsbatch > tasks to be completed: 1 -- submitted tasks are shown below
+~> TaskHandler[id: 14; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-siNT-R1); status: RUNNING; exit: -; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/91/65bf591f1a1e182eaed0db02833d37]
+Jan-29 01:12:02.163 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 14; name: POSTPROCESS_REDITOOLS_V1_OUTPUTS (ORL-207-siNT-R1); status: COMPLETED; exit: 0; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/91/65bf591f1a1e182eaed0db02833d37]
+Jan-29 01:12:02.549 [AWSBatch-executor-759] DEBUG n.c.aws.batch.AwsBatchTaskHandler - [AWS BATCH] Process `WRANGLE_FINAL_OUTPUTS_REDITOOLS_V1 (ORL-207-siNT-R1)` submitted > job=7cb12345-645a-4189-9000-9723b0d0656b; work-dir=s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/99/7cfdd6c4652a83b7252d3d71ed5f35
+Jan-29 01:12:02.550 [AWSBatch-executor-759] INFO  nextflow.Session - [99/7cfdd6] Submitted process > WRANGLE_FINAL_OUTPUTS_REDITOOLS_V1 (ORL-207-siNT-R1)
+Jan-29 01:12:22.191 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 36; name: WRANGLE_FINAL_OUTPUTS_REDITOOLS_V1 (ORL-207-siNT-R1); status: COMPLETED; exit: 0; error: -; workDir: s3://crmy-aws-batch-nf/REDisco/TCB-p150-datasets-full-run-v2-WD/99/7cfdd6c4652a83b7252d3d71ed5f35]
+Jan-29 01:12:22.293 [main] DEBUG nextflow.Session - Session await > all processes finished
+Jan-29 01:12:32.091 [Task monitor] DEBUG n.processor.TaskPollingMonitor - <<< barrier arrives (monitor: awsbatch) - terminating tasks monitor poll loop
+Jan-29 01:12:32.094 [main] DEBUG nextflow.Session - Session await > all barriers passed
+Jan-29 01:12:32.098 [main] DEBUG nextflow.util.ThreadPoolManager - Thread pool 'TaskFinalizer' shutdown completed (hard=false)
+Jan-29 01:12:32.100 [main] DEBUG nextflow.util.ThreadPoolManager - Thread pool 'PublishDir' shutdown completed (hard=false)
+Jan-29 01:12:32.109 [main] INFO  nextflow.script.BaseScript - Pipeline completed at: 2026-01-29T01:12:32.101057515+08:00
+Jan-29 01:12:32.115 [main] INFO  nextflow.script.BaseScript - Execution status: OK
+Jan-29 01:12:32.120 [main] INFO  nextflow.Nextflow - Duration: 2h 3m 42s
+Jan-29 01:12:32.140 [main] DEBUG n.trace.WorkflowStatsObserver - Workflow completed > WorkflowStats[succeededCount=24; failedCount=0; ignoredCount=0; cachedCount=12; pendingCount=0; submittedCount=0; runningCount=0; retriesCount=0; abortedCount=0; succeedDuration=5d 10h 19m 46s; failedDuration=0ms; cachedDuration=61d 5h 57m 18s;loadCpus=0; loadMemory=0; peakRunning=12; peakCpus=192; peakMemory=384 GB; ]
+Jan-29 01:12:32.517 [main] DEBUG nextflow.trace.ReportObserver - Workflow completed -- rendering execution report
+Jan-29 01:12:34.573 [main] DEBUG nextflow.trace.TimelineObserver - Workflow completed -- rendering execution timeline
+Jan-29 01:12:34.816 [main] DEBUG nextflow.trace.TraceFileObserver - Workflow completed -- saving trace file
+Jan-29 01:12:34.865 [main] DEBUG nextflow.cache.CacheDB - Closing CacheDB done
+Jan-29 01:12:34.935 [main] INFO  org.pf4j.AbstractPluginManager - Stop plugin 'nf-amazon@3.4.3'
+Jan-29 01:12:34.936 [main] DEBUG nextflow.plugin.BasePlugin - Plugin stopped nf-amazon
+Jan-29 01:12:34.938 [main] DEBUG nextflow.util.ThreadPoolManager - Thread pool 'FileTransfer' shutdown completed (hard=false)
+Jan-29 01:12:34.940 [main] DEBUG nextflow.util.ThreadPoolManager - Thread pool 'S3TransferManager' shutdown completed (hard=false)
+Jan-29 01:12:34.942 [main] DEBUG nextflow.script.ScriptRunner - > Execution complete -- Goodbye
