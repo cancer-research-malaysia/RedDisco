@@ -70,6 +70,8 @@ fi
 # Step 2: Filter invariant positions and low coverage sites
 # first check if an outTable file exists in the input editing directory
 
+###### NOTE: the second condition filters for sites with less than 10 reads in the WGS data but if you are using shallow WGS, it is likely that the sites that are known to be edited, would be filtered out here if you WGS data is not good or is not deep enough.
+
 echo "[Step 02] Filtering invariant positions and sites with <10 WGS reads..."
 awk -v FS="\t" '{if ($8!="-" && $10>=10 && $13=="-") print}' "outTable_${SAMPLE_ID}" > "outTable_${SAMPLE_ID}.filt.out" && \
 ###############################################################################
