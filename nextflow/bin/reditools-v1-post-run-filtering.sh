@@ -563,6 +563,8 @@ fi
 
 # Add editing status labels to novel sites based on their category
 echo "  - Adding editing status labels to novel sites..."
+mkdir -p final_output_files
+
 if [ ${NUM_NOVEL_TOTAL} -gt 0 ]; then
     awk 'BEGIN {FS="\t"; OFS="\t"} 
     {
@@ -581,7 +583,7 @@ if [ ${NUM_NOVEL_TOTAL} -gt 0 ]; then
             status = "NOVEL_NONALU"
         }
         print $0, status
-    }' "${SAMPLE_ID}-novelEditing.annotated" > "${SAMPLE_ID}-novelEditing.tsv"
+    }' "${SAMPLE_ID}-novelEditing.annotated" > final_output_files/"${SAMPLE_ID}-novelEditing.tsv"
 
     echo "    ✓ Status labels added"
 else
@@ -608,23 +610,24 @@ awk 'BEGIN {FS="\t"; OFS="\t"}
         status = "KNOWN_NONALU"
     }
     print $0, status
-}' "${SAMPLE_ID}-knownEditing" > "${SAMPLE_ID}-knownEditing-labeled.tsv"
+}' "${SAMPLE_ID}-knownEditing" > final_output_files/"${SAMPLE_ID}-knownEditing-labeled.tsv"
 
 # Create header-only file with EditingStatus column
 echo "  - Creating final file with header..."
-echo -e "Region\tPosition\tReference\tStrand\tCoverage-q\tMeanQ\tBaseCount[A,C,G,T]\tAllSubs\tFrequency\tgCoverage-q\tgMeanQ\tgBaseCount[A,C,G,T]\tgAllSubs\tgFrequency\tRepeatType\tRepeatName\tSNPFlag\tdbSNP_ID\tREDIPortalKnownEditingSites\tEditingStatus" > "${SAMPLE_ID}-allEditing.tsv"
+echo -e "Region\tPosition\tReference\tStrand\tCoverage-q\tMeanQ\tBaseCount[A,C,G,T]\tAllSubs\tFrequency\tgCoverage-q\tgMeanQ\tgBaseCount[A,C,G,T]\tgAllSubs\tgFrequency\tRepeatType\tRepeatName\tSNPFlag\tdbSNP_ID\tREDIPortalKnownEditingSites\tEditingStatus" > final_output_files/"${SAMPLE_ID}-allEditing.tsv"
 
 # Combine known and novel sites
-cat "${SAMPLE_ID}-knownEditing-labeled.tsv" "${SAMPLE_ID}-novelEditing.tsv" >> "${SAMPLE_ID}-allEditing.tsv"
+cat final_output_files/"${SAMPLE_ID}-knownEditing-labeled.tsv" final_output_files/"${SAMPLE_ID}-novelEditing.tsv" >> final_output_files/"${SAMPLE_ID}-allEditing.tsv"
 
 NUM_ALL_EDITING=$((NUM_KNOWN + NUM_NOVEL_TOTAL))
 echo "    ✓ Total editing sites (known + novel): ${NUM_ALL_EDITING}"
 
 # Create a summary table
 echo "  - Generating summary statistics..."
-echo -e "EditingStatus\tCount" > "${SAMPLE_ID}-editingSummary.txt"
-awk -F"\t" 'NR>1 {print $NF}' "${SAMPLE_ID}-allEditing.tsv" | sort | uniq -c | \
-    awk '{print $2"\t"$1}' >> "${SAMPLE_ID}-editingSummary.txt"
+mkdir -p summary_stats_files
+echo -e "EditingStatus\tCount" > summary_stats_files/"${SAMPLE_ID}-editingSummary.txt"
+awk -F"\t" 'NR>1 {print $NF}' final_output_files/"${SAMPLE_ID}-allEditing.tsv" | sort | uniq -c | \
+    awk '{print $2"\t"$1}' >> summary_stats_files/"${SAMPLE_ID}-editingSummary.txt"
 
 echo "✓ Result consolidation complete"
 echo ""
@@ -642,23 +645,23 @@ awk 'BEGIN {FS="\t"; OFS="\t"}
 NR==1 {print $0} 
 NR>1 {
     if ($3=="A" && $8=="AG" && $9>=0.1) print $0
-}' "${SAMPLE_ID}-allEditing.tsv" > "${SAMPLE_ID}-AG-Subs-Only-Sites-Freq-10pct.tsv"
+}' final_output_files/"${SAMPLE_ID}-allEditing.tsv" > final_output_files/"${SAMPLE_ID}-AG-Subs-Only-Sites-Freq-10pct.tsv"
 
 # 14-B: Site-Based Category Discovery
 # This counts unique genomic locations using the custom labels
-TOTAL_SITES=$(grep -v "Region" "${SAMPLE_ID}-allEditing.tsv" | wc -l)
-TOTAL_AG=$(grep -v "Region" "${SAMPLE_ID}-AG-Subs-Only-Sites-Freq-10pct.tsv" | wc -l)
+TOTAL_SITES=$(grep -v "Region" final_output_files/"${SAMPLE_ID}-allEditing.tsv" | wc -l)
+TOTAL_AG=$(grep -v "Region" final_output_files/"${SAMPLE_ID}-AG-Subs-Only-Sites-Freq-10pct.tsv" | wc -l)
 
 # Categorize specifically for the log output
-ALU_AG=$(grep -P "\t[^\t]*ALU[^\t]*$" "${SAMPLE_ID}-AG-Subs-Only-Sites-Freq-10pct.tsv" | wc -l)
-NONALU_AG=$(grep -P "\t[^\t]*NONALU[^\t]*$" "${SAMPLE_ID}-AG-Subs-Only-Sites-Freq-10pct.tsv" | wc -l)
-NONREP_AG=$(grep -P "\t[^\t]*NONREP[^\t]*$" "${SAMPLE_ID}-AG-Subs-Only-Sites-Freq-10pct.tsv" | wc -l)
+ALU_AG=$(grep -P "\t[^\t]*ALU[^\t]*$" final_output_files/"${SAMPLE_ID}-AG-Subs-Only-Sites-Freq-10pct.tsv" | wc -l)
+NONALU_AG=$(grep -P "\t[^\t]*NONALU[^\t]*$" final_output_files/"${SAMPLE_ID}-AG-Subs-Only-Sites-Freq-10pct.tsv" | wc -l)
+NONREP_AG=$(grep -P "\t[^\t]*NONREP[^\t]*$" final_output_files/"${SAMPLE_ID}-AG-Subs-Only-Sites-Freq-10pct.tsv" | wc -l)
 AG_RATIO=$(awk -v t="$TOTAL_SITES" -v a="$TOTAL_AG" 'BEGIN {if (t > 0) printf "%.2f", (a/t)*100; else print "0"}')
 
 # 14-C: Run the REDItools Weighted Statistics Utility
 # This provides the deep read-level substitution distribution math
 echo "  - Running getStatistics.py for weighted read distribution..."
-get_statistics-v2.py --input "${SAMPLE_ID}-allEditing.tsv" --output "${SAMPLE_ID}-editingStats.txt"
+get_statistics-v2.py --input final_output_files/"${SAMPLE_ID}-allEditing.tsv" --output final_output_files/"${SAMPLE_ID}-editingStats.txt"
 
 # 14-D: Generate Consolidated Console Report
 {
@@ -677,16 +680,16 @@ get_statistics-v2.py --input "${SAMPLE_ID}-allEditing.tsv" --output "${SAMPLE_ID
     printf "%s\n" "----------------------------------------------------"
     printf "Weighted Read Stats:   %s-editingStats.txt\n" "${SAMPLE_ID}"
     printf "%s\n" "===================================================="
-} > "${SAMPLE_ID}-FinalDiscoverySummary.txt"
+} > "summary_stats_files/${SAMPLE_ID}-FinalDiscoverySummary.txt"
 
 # safety scrub:
 # - s/\x1b//g         : Removes the 'ESC' character itself
 # - s/\x1b([A-Z]//g   : Removes set transitions like (B or (O
 # - s/\[[0-9;]*m//g   : Removes standard color codes
 # - s/[[:cntrl:]]//g  : Removes any other non-printable control characters
-sed -i 's/\x1b([A-Z]//g; s/\x1b\[[0-9;]*[a-zA-Z]//g; s/[[:cntrl:]]//g' "${SAMPLE_ID}-FinalDiscoverySummary.txt"
+sed -i 's/\x1b([A-Z]//g; s/\x1b\[[0-9;]*[a-zA-Z]//g; s/[[:cntrl:]]//g' summary_stats_files/"${SAMPLE_ID}-FinalDiscoverySummary.txt"
 
-cat "${SAMPLE_ID}-FinalDiscoverySummary.txt"
+cat summary_stats_files/"${SAMPLE_ID}-FinalDiscoverySummary.txt"
 echo "✓ Summary generated: ${SAMPLE_ID}-FinalDiscoverySummary.txt"
 echo "✓ Master AG list for SnpEff: ${SAMPLE_ID}-AG-Subs-Only-Sites-Freq-10pct.tsv"
 
