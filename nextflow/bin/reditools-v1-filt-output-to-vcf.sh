@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-
 # reditools-v1-filt-output-to-vcf.sh
 # Convert REDItools2 output TSV to VCF format for use with SnpEff
 #
@@ -39,11 +38,22 @@ awk -F'\t' 'BEGIN{
     print "##INFO=<ID=REDIPORTAL,Number=1,Type=String,Description=\"REDIPortal known editing site\">"
     print "##INFO=<ID=EDITSTATUS,Number=1,Type=String,Description=\"Editing status\">"
     print "#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO"
+
+    # Complement lookup for minus strand correction
+    comp["A"] = "T"; comp["T"] = "A"
+    comp["C"] = "G"; comp["G"] = "C"
 }
 NR==1{next}
 {
+    ref = $3
     alt = substr($8, 2, 1)
     if(alt == "." || alt == "") next
+
+    # For minus strand sites (strand=0 in REDItools v1), flip REF and ALT to genomic forward strand
+    if ($4 == "0") {
+        ref = comp[ref]
+        alt = comp[alt]
+    }
 
     strand   = ($4  == "-" ? "." : $4)
     reptype  = ($15 == "-" ? "." : $15)
@@ -57,8 +67,7 @@ NR==1{next}
     info = sprintf("STRAND=%s;COV=%s;MEANQ=%s;BASECOUNT=%s;FREQ=%s;GCOV=%s;GMEANQ=%s;GBASECOUNT=%s;GALLSUBS=%s;GFREQ=%s;REPTYPE=%s;REPNAME=%s;SNP=%s;DBSNP=%s;REDIPORTAL=%s;EDITSTATUS=%s",
         strand, $5, $6, $7, $9, $10, $11, $12, gallsubs, $14, reptype, repname, snpflag, dbsnp, redi, editstat)
 
-    print $1"\t"$2"\t.\t"$3"\t"alt"\t.\tPASS\t"info
+    print $1"\t"$2"\t.\t"ref"\t"alt"\t.\tPASS\t"info
 }' OFS='\t' "$INPUT" > "$OUTPUT"
 
 echo "Done: $OUTPUT"
-
