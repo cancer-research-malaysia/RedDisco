@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# reditools-v1-filt-output-to-vcf.sh
+# reditools-v1-filt-output-to-custom-vcf.sh
 # Convert REDItools2 output TSV to VCF format for use with SnpEff
 #
-# Usage: ./reditools-v1-filt-output-to-vcf.sh input.tsv output.vcf
+# Usage: ./reditools-v1-filt-output-to-custom-vcf.sh input.tsv output.vcf
 
 set -euo pipefail
 
