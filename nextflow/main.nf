@@ -32,14 +32,14 @@ workflow {
         error "Genome reference file (--genomeFa) must be provided"
     }
 
-    genome_fa               = file(params.genomeFa)
-    splice_sites            = file(params.spliceSitesAnnotation)
-    excluded_contigs        = file(params.excludedContigs)
-    rmsk_gtf                = file(params.rmskGtf)
-    rmsk_gtf_index          = file(params.rmskGtfIndex)
-    snp_gtf                 = file(params.snpGtf)
-    snp_gtf_index           = file(params.snpGtfIndex)
-    rediportals_db_gtf      = file(params.rediportalsDbGtf)
+    genome_fa                = file(params.genomeFa)
+    splice_sites             = file(params.spliceSitesAnnotation)
+    excluded_contigs         = file(params.excludedContigs)
+    rmsk_gtf                 = file(params.rmskGtf)
+    rmsk_gtf_index           = file(params.rmskGtfIndex)
+    snp_gtf                  = file(params.snpGtf)
+    snp_gtf_index            = file(params.snpGtfIndex)
+    rediportals_db_gtf       = file(params.rediportalsDbGtf)
     rediportals_db_gtf_index = file(params.rediportalsDbGtfIndex)
 
     // --- Main Analysis ---
@@ -50,10 +50,16 @@ workflow {
         genome_fa
     )
 
-    // Step 2: Post-process REDItools outputs (filtering, categorisation, known/novel split)
+    // Step 2: Join bam_ch and reditools output on sampleId before postprocessing
+    // This guarantees correct sample pairing regardless of parallel execution order
+    postprocess_input_ch = bam_ch
+        .join(CALL_RE_EVENTS_REDITOOLS_V1.out.reditools_output, by: 0)
+
     POSTPROCESS_REDITOOLS_V1_OUTPUTS(
-        bam_ch,
-        CALL_RE_EVENTS_REDITOOLS_V1.out.reditools_output,
+        postprocess_input_ch.map { sampleId, bam, bai, dnaBam, dnaBai, _reditoolsOut ->
+            tuple(sampleId, bam, bai, dnaBam, dnaBai) },
+        postprocess_input_ch.map { sampleId, _bam, _bai, _dnaBam, _dnaBai, reditoolsOut ->
+            tuple(sampleId, reditoolsOut) },
         genome_fa,
         splice_sites,
         excluded_contigs,
@@ -66,7 +72,7 @@ workflow {
     )
 
     // Step 3: VCF conversion, SnpEff annotation, and final TSV extraction
-    // Only the AG-substitution-only TSV is needed downstream; map to slim tuple
+    // Single-emit source — no join needed
     ANNOTATE_FINAL_OUTPUTS_SNPEFF(
         POSTPROCESS_REDITOOLS_V1_OUTPUTS.out.final_outputs
             .map { sampleId, _allEditing, agSubs, _knownLabeled, _novel ->
