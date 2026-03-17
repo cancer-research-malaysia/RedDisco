@@ -56,6 +56,14 @@ The REdDisco pipeline currently produced a specific output directory, which foll
             └── SAMPLE-NAME_R1-FinalDiscoverySummary.txt
 ```
 
-The main output directories within a sample replicate (e.g. `SAMPLE-NAME_R1`) output directory are `DnaRna_REDITOOLS-ID`, `post-processed`, and `final-annotated-SnpEff`.
+1. The main output directories within a sample replicate (e.g. `SAMPLE-NAME_R1`) output directory are `DnaRna_REDITOOLS-ID`, `post-processed`, and `final-annotated-SnpEff`.
+
+2. The `post-processed` folder contains various plaintext files containing either all editing sites that pass the stringent filtering, novel editing sites, and AG-edited sites (with editing frequency above or equal to 10%).
+
+3. The `final-annotated-SnpEff` folder contains various files that contain only the AG-edited sites. The `tsv` files are tab-delimited files that can be opened in Excel or text editor of your choice. 
+
+4. In the `final-annotated-SnpEff` folder, the `.known_sites_freq10pct.tsv` files contain only the bona fide known AG-edited sites passing the editing frequency filter, while the `_genic.tsv` version is the subset of sites that are NOT intergenic.
+
+5. Finally, the `_gene_level_editing.tsv` is the file that contains the aggregated data of sites at gene level. The `_gene_level_editing_subset_protein_coding_gt2_sites.tsv` file is the subset of the former, containing only the genes that have more than two AG-edited sites AND are themselves protein coding genes. 
 
 
