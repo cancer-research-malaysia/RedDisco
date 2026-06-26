@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # reditools-v1-filt-output-to-custom-vcf.sh
-# Convert REDItools2 output TSV to VCF format for use with SnpEff (version 2 where it takes allEditing instead of AGSubsOnly)
+# Convert REDItools2 output TSV to VCF format for use with SnpEff
 #
 # Usage: ./reditools-v1-filt-output-to-custom-vcf.sh input.tsv output.vcf
 
@@ -46,20 +46,8 @@ awk -F'\t' 'BEGIN{
 NR==1{next}
 {
     ref = $3
-    allsubs = $8
-    if(allsubs == "." || allsubs == "") next
-
-    # Determine ALT allele dynamically based on the observed transitions
-    # Handles multi-substitution cases safely (e.g. "AG AT")
-    alt = ""
-    if (ref == "A" && allsubs ~ /AG/) {
-        alt = "G"
-    } else if (ref == "T" && allsubs ~ /TC/) {
-        alt = "C"
-    }
-    
-    # Drop alternative variations that do not match canonical transitions
-    if (alt == "") next
+    alt = substr($8, 2, 1)
+    if(alt == "." || alt == "") next
 
     # For minus strand sites (strand=0 in REDItools v1), flip REF and ALT to genomic forward strand
     if ($4 == "0") {

@@ -1,93 +1,164 @@
 #!/usr/bin/env bash
 # snpeff-annot-to-tsv.sh
-# Extract SnpEff-annotated VCF to TSV format using SnpSift
-# Produces two outputs:
-#   1. All known editing sites (FREQ > 0.1, REDIPortal confirmed)
-#   2. Known genic sites only (excludes intergenic)
-#
-# Usage: ./snpeff-annot-to-tsv.sh input.ann.vcf output_prefix
-
+# Extract and flatten SnpEff-annotated transcript variants to a Transcript-Level summary matrix.
+# Computes a coverage-weighted mean editing frequency for global editing-loss analysis
+# and preserves maximum frequency and impact metrics for downstream analytical forks.
 set -euo pipefail
 
-if [[ $# -ne 2 ]]; then
-    echo "Usage: $0 input.ann.vcf output_prefix" >&2
+# Check for the 3 required positional parameters
+if [[ $# -ne 3 ]]; then
+    echo "Usage: $0 input.ann.vcf output_dir sample_name" >&2
     exit 1
 fi
 
 INPUT="$1"
 PREFIX="$2"
+SAMPLE_NAME="$3"
 
+# Validation
 if [[ ! -f "$INPUT" ]]; then
-    echo "Error: input file '$INPUT' not found" >&2
+    echo "Error: input VCF file '$INPUT' not found" >&2
     exit 1
 fi
 
-FIELDS="CHROM POS REF ALT \
-    ANN[0].GENE \
-    ANN[0].FEATUREID \
-    ANN[0].EFFECT \
-    ANN[0].IMPACT \
-    ANN[0].BIOTYPE \
-    ANN[0].HGVS_C \
-    STRAND \
-    FREQ \
-    COV \
-    REPTYPE \
-    REPNAME \
-    EDITSTATUS"
+# Create output directory
+mkdir -p "${PREFIX}"
 
-# 1. All known sites with FREQ > 0.1
-echo "Extracting all known sites (FREQ > 0.1)..."
-SnpSift filter "FREQ > 0.1 & REDIPORTAL == 'ed'" "$INPUT" | \
+# Define the explicit static column mapping layout for SnpSift extractFields
+# Field positions inside awk:
+# $1=CHROM, $2=POS, $3=REF, $4=ALT, $5=ANN, $6=STRAND, $7=FREQ, $8=COV, $9=REPTYPE, $10=REPNAME, $11=EDITSTATUS
+FIELDS="CHROM POS REF ALT ANN STRAND FREQ COV REPTYPE REPNAME EDITSTATUS"
+
+# -------------------------------------------------------------------------
+# Step 1: All known editing sites (Master Extraction Pass)
+# -------------------------------------------------------------------------
+echo "Extracting all known sites..."
+SnpSift filter "REDIPORTAL == 'ed'" "$INPUT" | \
 SnpSift extractFields - $FIELDS \
-    > "${PREFIX}.known_sites_freq10pct.tsv"
+    > "${PREFIX}/${SAMPLE_NAME}.known_sites_all_freq.tsv"
 
-echo "  -> ${PREFIX}.known_sites_freq10pct.tsv ($(grep -c $'^[^#]' "${PREFIX}.known_sites_freq10pct.tsv") sites)"
+# -------------------------------------------------------------------------
+# Step 2: Collapse to Transcript-Level Matrices via In-Memory Stream Processing
+# -------------------------------------------------------------------------
+echo "Collapsing transcript-level annotations and calculating weights..."
 
-# 2. Known genic sites only (intronic, UTR, exonic — excludes intergenic)
-echo "Extracting known genic sites (FREQ > 0.1)..."
-SnpSift filter "FREQ > 0.1 & REDIPORTAL == 'ed' & !(ANN[0].EFFECT has 'intergenic_region')" "$INPUT" | \
-SnpSift extractFields - $FIELDS \
-    > "${PREFIX}.known_sites_freq10pct_genic.tsv"
-
-echo "  -> ${PREFIX}.known_sites_freq10pct_genic.tsv ($(grep -c $'^[^#]' "${PREFIX}.known_sites_freq10pct_genic.tsv") sites)"
-
-
-# 3. Collapse gene-level annotations (one line per gene, with all effects concatenated)
-echo "Collapsing gene-level annotations..."
-
-# check if the input file exists and is not empty
-if [[ ! -s "${PREFIX}.known_sites_freq10pct_genic.tsv" ]]; then
-    echo "Error: input file '${PREFIX}.known_sites_freq10pct_genic.tsv' not found or empty" >&2
+if [[ ! -s "${PREFIX}/${SAMPLE_NAME}.known_sites_all_freq.tsv" ]]; then
+    echo "Error: Intermediate file '${PREFIX}/${SAMPLE_NAME}.known_sites_all_freq.tsv' is empty" >&2
     exit 1
 fi
 
-(awk -F'\t' 'NR>1 && $5 != "." {
-    gene=$5
-    freq=$12
-    effect=$7
-    biotype=$9
-    count[gene]++
-    if (!minfreq[gene] || freq < minfreq[gene]) minfreq[gene]=freq
-    if (freq > maxfreq[gene]) maxfreq[gene]=freq
-    if (!seen_effect[gene,effect]++) effectlist[gene]=effectlist[gene] (effectlist[gene]?",":"") effect
-    if (!seen_bio[gene,biotype]++) biolist[gene]=biolist[gene] (biolist[gene]?",":"") biotype
+# Map positional indices: 1=TX, 2=GENE, 3=SITES, 4=WEIGHTED_MEAN, 5=MAX_FREQ, 6=BIOTYPE, 7=IMPACT, 8=EFFECTS
+awk -F'\t' '
+NR>1 {
+    site_id = $1 ":" $2
+    freq    = $7 + 0.0
+    cov     = $8 + 0.0
+    
+    split($5, transcripts, ",")
+    
+    for (t in transcripts) {
+        split(transcripts[t], subfields, "|")
+        
+        effect  = subfields[2]
+        impact  = subfields[3]   # Impact (HIGH, MODERATE, LOW, MODIFIER)
+        gene    = subfields[4]
+        tx_id   = subfields[7]
+        biotype = subfields[8]
+        
+        if (tx_id == "" || tx_id == "." || effect == "intergenic_region" || biotype == "intergenic_region") {
+            continue
+        }
+        
+        if (!seen_site[tx_id, site_id]++) {
+            count[tx_id]++
+        }
+        
+        gene_name[tx_id] = gene
+        biolist[tx_id]   = biotype
+        
+        sum_freq_cov[tx_id] += (freq * cov)
+        sum_cov[tx_id]      += cov
+        
+        if (freq > maxfreq[tx_id]) {
+            maxfreq[tx_id] = freq
+        }
+        
+        if (effect != "" && !seen_effect[tx_id, effect]++) {
+            effectlist[tx_id] = (effectlist[tx_id] ? effectlist[tx_id] "," : "") effect
+        }
+        
+        if (impact != "" && !seen_impact[tx_id, impact]++) {
+            impactlist[tx_id] = (impactlist[tx_id] ? impactlist[tx_id] "," : "") impact
+        }
+    }
 }
 END {
-    for (gene in count) {
-        printf "%s\t%d\t%.3f\t%.3f\t%s\t%s\n",
-            gene, count[gene], minfreq[gene], maxfreq[gene], biolist[gene], effectlist[gene]
+    for (tx in count) {
+        weighted_mean = (sum_cov[tx] > 0) ? (sum_freq_cov[tx] / sum_cov[tx]) : 0.0
+        
+        printf "%s\t%s\t%d\t%.4f\t%.4f\t%s\t%s\t%s\n",
+            tx, gene_name[tx], count[tx], weighted_mean, maxfreq[tx], biolist[tx], impactlist[tx], effectlist[tx]
     }
-}' "${PREFIX}.known_sites_freq10pct_genic.tsv" | sort -k2,2nr) | awk 'BEGIN{print "GENE\tEDITING_SITES\tMIN_FREQ\tMAX_FREQ\tBIOTYPE\tEFFECTS"}{print}' > "${PREFIX}_gene_level_editing.tsv"
+}' "${PREFIX}/${SAMPLE_NAME}.known_sites_all_freq.tsv" | sort -k3,3nr -k4,4nr > "${PREFIX}/${SAMPLE_NAME}_transcript_level_editing.tmp"
 
-# 4. subset to only protein-coding genes
-echo "Extracting protein-coding genes only from the gene-level summary..."
-# check if the input file exists and is not empty
-if [[ ! -s "${PREFIX}_gene_level_editing.tsv" ]]; then
-    echo "Error: input file '${PREFIX}_gene_level_editing.tsv' not found or empty" >&2
-    exit 1
-fi
+# Append Header to Master Summary Matrix (Primary Sort: Site count descending, Secondary Sort: Weighted Mean descending)
+awk 'BEGIN{print "TRANSCRIPT\tGENE\tEDITING_SITES\tWEIGHTED_MEAN_FREQ\tMAX_FREQ\tBIOTYPE\tIMPACT\tEFFECTS"}{print}' \
+    "${PREFIX}/${SAMPLE_NAME}_transcript_level_editing.tmp" \
+    > "${PREFIX}/${SAMPLE_NAME}_transcript_level_editing.tsv"
 
-awk -F'\t' 'NR==1 || ($2 > 1 && $6 !~ /,/ && $5 == "protein_coding")' "${PREFIX}_gene_level_editing.tsv" > "${PREFIX}_gene_level_editing_subset_protein_coding_gt2_sites.tsv"
+rm "${PREFIX}/${SAMPLE_NAME}_transcript_level_editing.tmp"
 
-echo "Done."
+# -------------------------------------------------------------------------
+# Step 3: Downstream Analytical Splits and Specialized Sorting Forks
+# -------------------------------------------------------------------------
+echo "Generating specialized sub-files for targeted exploration..."
+
+# User-configurable filtering threshold for downstream neoantigen execution
+NEO_MIN_FREQ=0.2000
+
+# --- FORK 1: Hyper-Editing (Clustered sites, sorted by global burden) ---
+# Filters for transcripts with high-density clusters of editing sites (>2) to capture structural/stability shifts.
+awk -F'\t' '
+    NR == 1 { next }
+    $6 == "protein_coding" && $3 > 2 { print }
+' "${PREFIX}/${SAMPLE_NAME}_transcript_level_editing.tsv" | \
+sort -t$'\t' -k4,4nr > "${PREFIX}/${SAMPLE_NAME}_hyper_edited_protein-coding.tmp"
+
+awk 'BEGIN{print "TRANSCRIPT\tGENE\tEDITING_SITES\tWEIGHTED_MEAN_FREQ\tMAX_FREQ\tBIOTYPE\tIMPACT\tEFFECTS"}{print}' \
+    "${PREFIX}/${SAMPLE_NAME}_hyper_edited_protein-coding.tmp" \
+    > "${PREFIX}/${SAMPLE_NAME}_hyper_edited_protein-coding.tsv"
+
+
+# --- FORK 2: Isolated High-Penetrance Sites (Clean, highly efficient singletons/doubletons) ---
+# Isolates low-site-count protein-coding transcripts (<=2) where the single or double sites 
+# are edited with high penetrance (>=50%), highlighting major localized functional or regulatory switch-flips.
+awk -F'\t' '
+    NR == 1 { next }
+    $6 == "protein_coding" && $3 <= 2 && $5 >= 0.5000 { print }
+' "${PREFIX}/${SAMPLE_NAME}_transcript_level_editing.tsv" | \
+sort -t$'\t' -k5,5nr > "${PREFIX}/${SAMPLE_NAME}_isolated_high_penetrance_sites.tmp"
+
+awk 'BEGIN{print "TRANSCRIPT\tGENE\tEDITING_SITES\tWEIGHTED_MEAN_FREQ\tMAX_FREQ\tBIOTYPE\tIMPACT\tEFFECTS"}{print}' \
+    "${PREFIX}/${SAMPLE_NAME}_isolated_high_penetrance_sites.tmp" \
+    > "${PREFIX}/${SAMPLE_NAME}_isolated_high_penetrance_sites_protein-coding.tsv"
+
+
+# --- FORK 3: Neoantigen Candidates (Altered coding framework with frequency filtering) ---
+# Isolates protein-coding transcripts carrying translational structural/amino-acid modifications (HIGH or MODERATE),
+# filtered by a user-level frequency threshold to ensure high-confidence expression and clonal presentation.
+awk -F'\t' -v min_freq="$NEO_MIN_FREQ" '
+    NR == 1 { next }
+    $6 == "protein_coding" && ($7 ~ /MODERATE/ || $7 ~ /HIGH/) && $5 >= min_freq { print }
+' "${PREFIX}/${SAMPLE_NAME}_transcript_level_editing.tsv" | \
+sort -t$'\t' -k5,5nr > "${PREFIX}/${SAMPLE_NAME}_neoantigen_candidates.tmp"
+
+awk 'BEGIN{print "TRANSCRIPT\tGENE\tEDITING_SITES\tWEIGHTED_MEAN_FREQ\tMAX_FREQ\tBIOTYPE\tIMPACT\tEFFECTS"}{print}' \
+    "${PREFIX}/${SAMPLE_NAME}_neoantigen_candidates.tmp" \
+    > "${PREFIX}/${SAMPLE_NAME}_neoantigen_candidates_protein-coding.tsv"
+
+
+# Clean up intermediate system blocks
+rm -f ${PREFIX}/${SAMPLE_NAME}_*.tmp
+
+echo "All files successfully generated. Pipeline complete."
+
