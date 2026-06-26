@@ -75,8 +75,8 @@ workflow {
     // Single-emit source — no join needed
     ANNOTATE_FINAL_OUTPUTS_SNPEFF(
         POSTPROCESS_REDITOOLS_V1_OUTPUTS.out.final_outputs
-            .map { sampleId, _allEditing, agSubs, _knownLabeled, _novel ->
-                   tuple(sampleId, agSubs) }
+            .map { sampleId, allEditing, _agSubs, _knownLabeled, _novel ->
+                   tuple(sampleId, allEditing) }
     )
 
     // Completion handler
