@@ -3,7 +3,7 @@ process ANNOTATE_FINAL_OUTPUTS_SNPEFF {
     tag "$sampleId"
     label 'finalAnnotateSnpeff'
     container "${params.container__snpeff}"
-    publishDir "${params.outputDir}/reditools-v1/${sampleId}/final-annotated-SnpEff", mode: 'copy'
+    publishDir "${params.outputDir}/reditools-v1/${sampleId}/annotated-sifted-sites", mode: 'copy'
 
     input:
     tuple val(sampleId),
@@ -16,10 +16,10 @@ process ANNOTATE_FINAL_OUTPUTS_SNPEFF {
 
     // Transcript-level Specialized Subsets 
     tuple val(sampleId),
-          path("${sampleId}-snpSift/${sampleId}_transcript_level_editing.tsv"),
-          path("${sampleId}-snpSift/${sampleId}_hyper_edited_protein-coding.tsv"),
-          path("${sampleId}-snpSift/${sampleId}_isolated_high_penetrance_sites_protein-coding.tsv"),
-          path("${sampleId}-snpSift/${sampleId}_neoantigen_candidates_protein-coding.tsv"),
+          path("snpSift-out/${sampleId}_transcript_level_editing.tsv"),
+          path("snpSift-out/${sampleId}_hyper_edited_protein-coding.tsv"),
+          path("snpSift-out/${sampleId}_isolated_high_penetrance_sites_protein-coding.tsv"),
+          path("snpSift-out/${sampleId}-snpSift/${sampleId}_neoantigen_candidates_protein-coding.tsv"),
           emit: transcript_level_tables
 
     script:
@@ -37,11 +37,10 @@ process ANNOTATE_FINAL_OUTPUTS_SNPEFF {
         -v hg38 \
         ${rawVcf} > ${annVcf}
 
-    mkdir -p ${sampleId}-snpSift
     echo "[Step 3/3] Extracting SnpEff-annotated VCF to TSV for sample ${sampleId}..."
     bash snpeff-annot-to-tsv.sh \
         ${annVcf} \
-        "${sampleId}-snpSift/${sampleId}" \
+        "snpSift-out" \
         ${sampleId}
 
     echo "[ANNOTATE_FINAL_OUTPUTS_SNPEFF] All steps completed successfully for sample ${sampleId}."

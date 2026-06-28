@@ -3,7 +3,7 @@ process POSTPROCESS_REDITOOLS_V1_OUTPUTS {
     tag "$sampleId"
     label 'postprocessReditools'
     container "${params.container__reditools}"
-    publishDir "${params.outputDir}/reditools-v1/${sampleId}/postprocessed", mode: 'copy'
+    publishDir "${params.outputDir}/reditools-v1/${sampleId}/processed_calls_${sampleId}", mode: 'copy'
 
     input:
     tuple val(sampleId), path(bamFile), path(indexFile), path(dnaBamFile), path(dnaIndexFile)
@@ -23,9 +23,9 @@ process POSTPROCESS_REDITOOLS_V1_OUTPUTS {
     //   ${SAMPLE_ID}--pos.txt     -> ${sampleId}-NONALU-NONREP--novelEditing.txt
     //   ${SAMPLE_ID}--pos-ALU.txt -> ${sampleId}-ALU--novelEditing.txt
     tuple val(sampleId),
-          path("${sampleId}-knownEditing"),
-          path("${sampleId}-NONALU-NONREP--novelEditing.txt"),
-          path("${sampleId}-ALU--novelEditing.txt"),
+          path("upstream-site-level-split-tables/${sampleId}-knownEditing.txt"),
+          path("upstream-site-level-split-tables/${sampleId}-NONALU-NONREP--novelEditing.txt"),
+          path("upstream-site-level-split-tables/${sampleId}-ALU--novelEditing.txt"),
           emit: for_wrangling
 
     // REDItools re-analysis output directories (novel ALU and novel NONALU+NONREP)
@@ -36,15 +36,15 @@ process POSTPROCESS_REDITOOLS_V1_OUTPUTS {
 
     // Final labeled outputs and summary statistics
     tuple val(sampleId),
-          path("final_output_files/${sampleId}-allEditing.tsv"),
-          path("final_output_files/${SAMPLE_ID}-AG-Subs-Only-Sites.tsv"),
-          path("final_output_files/${sampleId}-knownEditing-labeled.tsv"),
-          path("final_output_files/${sampleId}-novelEditing.tsv"),
+          path("final-labeled-calls/${sampleId}-allEditing.tsv"),
+          path("final-labeled-calls/${SAMPLE_ID}-AG-Subs-Only-Sites.tsv"),
+          path("final-labeled-calls/${sampleId}-knownEditing-labeled.tsv"),
+          path("final-labeled-calls/${sampleId}-novelEditing.tsv"),
           emit: final_outputs
 
     tuple val(sampleId),
-          path("summary_stats_files/${sampleId}-editingSummary.txt"),
-          path("summary_stats_files/${sampleId}-FinalDiscoverySummary.txt"),
+          path("summary-stats/${sampleId}-editingSummary.txt"),
+          path("summary-stats/${sampleId}-FinalDiscoverySummary.txt"),
           emit: summary_stats
 
     // Intermediate files for publishing

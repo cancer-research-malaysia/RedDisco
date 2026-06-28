@@ -24,7 +24,7 @@ if [ "$#" -ne 10 ]; then
 fi
 
 RNA_BAM=$1              # Aligned.sortedByCoord.out.bam
-EDITING_DIR=$2          # Output folder of REDItools DNA-RNA run (DnaRna_*)
+EDITING_DIR=$2          # Output folder of REDItools DNA-RNA run
 GENOME_FA=$3            # GRCh38.primary_assembly.genome.fa
 SPLICE_SITES=$4         # gencode.v49.primary_assembly.annotation.splicesites.txt
 EXClUDE_CONTIGS=$5      # excluded_contigs.txt
@@ -266,13 +266,16 @@ ALU_SITES="outTable_${SAMPLE_ID}.filt.out.rmsk.snp.ed.set1.ALU"
 NONALU_SITES="outTable_${SAMPLE_ID}.filt.out.rmsk.snp.ed.set2.NONALU"
 NONREP_SITES="outTable_${SAMPLE_ID}.filt.out.rmsk.snp.ed.set2.NONREP"
 
+# make dir
+mkdir -p upstream-site-level-split-tables
+
 # Combine all categories
 cat "${ALU_SITES}" "${NONALU_SITES}" "${NONREP_SITES}" > "${SAMPLE_ID}-ALU-NONALU-NONREP"
 
 # Extract known editing sites
-awk -v FS="\t" '{if ($19=="ed") print}' "${SAMPLE_ID}-ALU-NONALU-NONREP" > "${SAMPLE_ID}-knownEditing"
+awk -v FS="\t" '{if ($19=="ed") print}' "${SAMPLE_ID}-ALU-NONALU-NONREP" > "upstream-site-level-split-tables/${SAMPLE_ID}-knownEditing.txt"
 
-NUM_KNOWN=$(wc -l < "${SAMPLE_ID}-knownEditing")
+NUM_KNOWN=$(wc -l < "upstream-site-level-split-tables/${SAMPLE_ID}-knownEditing.txt")
 echo "✓ Known editing sites recovered: ${NUM_KNOWN}"
 
 # ============================================================================
@@ -287,9 +290,9 @@ echo "[Step 08] Processing novel editing candidates..."
 
 # 08-A: Extract novel REP NON ALU and NON REP sites
 echo "  [08-A] Extracting novel REP NON ALU and NON REP sites..."
-cat "${NONALU_SITES}" "${NONREP_SITES}" | awk -v FS="\t" '{if ($19!="ed") print}' - > "${SAMPLE_ID}-NONALU-NONREP--novelEditing.txt"
+cat "${NONALU_SITES}" "${NONREP_SITES}" | awk -v FS="\t" '{if ($19!="ed") print}' - > "upstream-site-level-split-tables/${SAMPLE_ID}-NONALU-NONREP--novelEditing.txt"
 
-NUM_NOVEL_NONALU_NONREP=$(wc -l < "${SAMPLE_ID}-NONALU-NONREP--novelEditing.txt")
+NUM_NOVEL_NONALU_NONREP=$(wc -l < "upstream-site-level-split-tables/${SAMPLE_ID}-NONALU-NONREP--novelEditing.txt")
 echo "    ✓ Novel NONALU+NONREP sites: ${NUM_NOVEL_NONALU_NONREP}"
 
 # Skip if no novel sites
@@ -300,7 +303,7 @@ else
     SKIP_NONALU_NONREP=false
     # Convert to GFF
     echo "  [08-A] Converting to GFF format..."
-    TableToGFF.py -i "${SAMPLE_ID}-NONALU-NONREP--novelEditing.txt" -s -t -o "${SAMPLE_ID}-NONALU-NONREP--novelEdits.gff"
+    TableToGFF.py -i "upstream-site-level-split-tables/${SAMPLE_ID}-NONALU-NONREP--novelEditing.txt" -s -t -o "${SAMPLE_ID}-NONALU-NONREP--novelEdits.gff"
     if [ ! -f "${SAMPLE_ID}-NONALU-NONREP--novelEdits.gff" ]; then
         echo "ERROR: Failed to create GFF file for NONALU & NONREP sites. Exiting."
         exit 1
@@ -310,9 +313,9 @@ fi
 
 # 08-B: Extract novel ALU sites
 echo "  [08-B] Extracting novel ALU sites..."
-awk -v FS="\t" '{if ($19!="ed") print}' "${ALU_SITES}" > "${SAMPLE_ID}-ALU--novelEditing.txt"
+awk -v FS="\t" '{if ($19!="ed") print}' "${ALU_SITES}" > "upstream-site-level-split-tables/${SAMPLE_ID}-ALU--novelEditing.txt"
 
-NUM_NOVEL_ALU=$(wc -l < "${SAMPLE_ID}-ALU--novelEditing.txt")
+NUM_NOVEL_ALU=$(wc -l < "upstream-site-level-split-tables/${SAMPLE_ID}-ALU--novelEditing.txt")
 echo "    ✓ Novel ALU sites: ${NUM_NOVEL_ALU}"
 
 # Skip if no novel ALU sites
@@ -323,7 +326,7 @@ else
     SKIP_ALU=false
     # Convert to GFF
     echo "  [08-B] Converting to GFF format..."
-    TableToGFF.py -i "${SAMPLE_ID}-ALU--novelEditing.txt" -s -t -o "${SAMPLE_ID}-ALU--novelEdits.gff"
+    TableToGFF.py -i "upstream-site-level-split-tables/${SAMPLE_ID}-ALU--novelEditing.txt" -s -t -o "${SAMPLE_ID}-ALU--novelEdits.gff"
     if [ ! -f "${SAMPLE_ID}-ALU--novelEdits.gff" ]; then
         echo "ERROR: Failed to create GFF file for ALU. Exiting."
         exit 1
@@ -563,7 +566,7 @@ fi
 
 # Add editing status labels to novel sites based on their category
 echo "  - Adding editing status labels to novel sites..."
-mkdir -p final_output_files
+mkdir -p final-labeled-calls
 
 if [ ${NUM_NOVEL_TOTAL} -gt 0 ]; then
     awk 'BEGIN {FS="\t"; OFS="\t"} 
@@ -583,7 +586,7 @@ if [ ${NUM_NOVEL_TOTAL} -gt 0 ]; then
             status = "NOVEL_NONALU"
         }
         print $0, status
-    }' "${SAMPLE_ID}-novelEditing.annotated" > final_output_files/"${SAMPLE_ID}-novelEditing.tsv"
+    }' "${SAMPLE_ID}-novelEditing.annotated" > final-labeled-calls/"${SAMPLE_ID}-novelEditing.tsv"
 
     echo "    ✓ Status labels added"
 else
@@ -610,24 +613,24 @@ awk 'BEGIN {FS="\t"; OFS="\t"}
         status = "KNOWN_NONALU"
     }
     print $0, status
-}' "${SAMPLE_ID}-knownEditing" > final_output_files/"${SAMPLE_ID}-knownEditing-labeled.tsv"
+}' "upstream-site-level-split-tables/${SAMPLE_ID}-knownEditing.txt" > final-labeled-calls/"${SAMPLE_ID}-knownEditing-labeled.tsv"
 
 # Create header-only file with EditingStatus column
 echo "  - Creating final file with header..."
-echo -e "Region\tPosition\tReference\tStrand\tCoverage-q\tMeanQ\tBaseCount[A,C,G,T]\tAllSubs\tFrequency\tgCoverage-q\tgMeanQ\tgBaseCount[A,C,G,T]\tgAllSubs\tgFrequency\tRepeatType\tRepeatName\tSNPFlag\tdbSNP_ID\tREDIPortalKnownEditingSites\tEditingStatus" > final_output_files/"${SAMPLE_ID}-allEditing.tsv"
+echo -e "Region\tPosition\tReference\tStrand\tCoverage-q\tMeanQ\tBaseCount[A,C,G,T]\tAllSubs\tFrequency\tgCoverage-q\tgMeanQ\tgBaseCount[A,C,G,T]\tgAllSubs\tgFrequency\tRepeatType\tRepeatName\tSNPFlag\tdbSNP_ID\tREDIPortalKnownEditingSites\tEditingStatus" > final-labeled-calls/"${SAMPLE_ID}-allEditing.tsv"
 
 # Combine known and novel sites
-cat final_output_files/"${SAMPLE_ID}-knownEditing-labeled.tsv" final_output_files/"${SAMPLE_ID}-novelEditing.tsv" >> final_output_files/"${SAMPLE_ID}-allEditing.tsv"
+cat final-labeled-calls/"${SAMPLE_ID}-knownEditing-labeled.tsv" final-labeled-calls/"${SAMPLE_ID}-novelEditing.tsv" >> final-labeled-calls/"${SAMPLE_ID}-allEditing.tsv"
 
 NUM_ALL_EDITING=$((NUM_KNOWN + NUM_NOVEL_TOTAL))
 echo "    ✓ Total editing sites (known + novel): ${NUM_ALL_EDITING}"
 
 # Create a summary table
 echo "  - Generating summary statistics..."
-mkdir -p summary_stats_files
-echo -e "EditingStatus\tCount" > summary_stats_files/"${SAMPLE_ID}-editingSummary.txt"
-awk -F"\t" 'NR>1 {print $NF}' final_output_files/"${SAMPLE_ID}-allEditing.tsv" | sort | uniq -c | \
-    awk '{print $2"\t"$1}' >> summary_stats_files/"${SAMPLE_ID}-editingSummary.txt"
+mkdir -p summary-stats
+echo -e "EditingStatus\tCount" > summary-stats/"${SAMPLE_ID}-editingSummary.txt"
+awk -F"\t" 'NR>1 {print $NF}' final-labeled-calls/"${SAMPLE_ID}-allEditing.tsv" | sort | uniq -c | \
+    awk '{print $2"\t"$1}' >> summary-stats/"${SAMPLE_ID}-editingSummary.txt"
 
 echo "✓ Result consolidation complete"
 echo ""
@@ -645,23 +648,23 @@ awk 'BEGIN {FS="\t"; OFS="\t"}
 NR==1 {print $0} 
 NR>1 {
     if ($3=="A" && $8=="AG") print $0
-}' final_output_files/"${SAMPLE_ID}-allEditing.tsv" > final_output_files/"${SAMPLE_ID}-AG-Subs-Only-Sites.tsv"
+}' final-labeled-calls/"${SAMPLE_ID}-allEditing.tsv" > final-labeled-calls/"${SAMPLE_ID}-AG-Subs-Only-Sites.tsv"
 
 # 14-B: Site-Based Category Discovery
 # This counts unique genomic locations using the custom labels
-TOTAL_SITES=$(grep -v "Region" final_output_files/"${SAMPLE_ID}-allEditing.tsv" | wc -l)
-TOTAL_AG=$(grep -v "Region" final_output_files/"${SAMPLE_ID}-AG-Subs-Only-Sites.tsv" | wc -l)
+TOTAL_SITES=$(grep -v "Region" final-labeled-calls/"${SAMPLE_ID}-allEditing.tsv" | wc -l)
+TOTAL_AG=$(grep -v "Region" final-labeled-calls/"${SAMPLE_ID}-AG-Subs-Only-Sites.tsv" | wc -l)
 
 # Categorize specifically for the log output
-ALU_AG=$(grep -P "\t[^\t]*ALU[^\t]*$" final_output_files/"${SAMPLE_ID}-AG-Subs-Only-Sites.tsv" | wc -l)
-NONALU_AG=$(grep -P "\t[^\t]*NONALU[^\t]*$" final_output_files/"${SAMPLE_ID}-AG-Subs-Only-Sites.tsv" | wc -l)
-NONREP_AG=$(grep -P "\t[^\t]*NONREP[^\t]*$" final_output_files/"${SAMPLE_ID}-AG-Subs-Only-Sites.tsv" | wc -l)
+ALU_AG=$(grep -P "\t[^\t]*ALU[^\t]*$" final-labeled-calls/"${SAMPLE_ID}-AG-Subs-Only-Sites.tsv" | wc -l)
+NONALU_AG=$(grep -P "\t[^\t]*NONALU[^\t]*$" final-labeled-calls/"${SAMPLE_ID}-AG-Subs-Only-Sites.tsv" | wc -l)
+NONREP_AG=$(grep -P "\t[^\t]*NONREP[^\t]*$" final-labeled-calls/"${SAMPLE_ID}-AG-Subs-Only-Sites.tsv" | wc -l)
 AG_RATIO=$(awk -v t="$TOTAL_SITES" -v a="$TOTAL_AG" 'BEGIN {if (t > 0) printf "%.2f", (a/t)*100; else print "0"}')
 
 # 14-C: Run the REDItools Weighted Statistics Utility
 # This provides the deep read-level substitution distribution math
 echo "  - Running getStatistics.py for weighted read distribution..."
-get_statistics-v2.py --input final_output_files/"${SAMPLE_ID}-allEditing.tsv" --output final_output_files/"${SAMPLE_ID}-editingStats.txt"
+get_statistics-v2.py --input final-labeled-calls/"${SAMPLE_ID}-allEditing.tsv" --output final-labeled-calls/"${SAMPLE_ID}-editingStats.txt"
 
 # 14-D: Generate Consolidated Console Report
 {
@@ -680,16 +683,16 @@ get_statistics-v2.py --input final_output_files/"${SAMPLE_ID}-allEditing.tsv" --
     printf "%s\n" "----------------------------------------------------"
     printf "Weighted Read Stats:   %s-editingStats.txt\n" "${SAMPLE_ID}"
     printf "%s\n" "===================================================="
-} > "summary_stats_files/${SAMPLE_ID}-FinalDiscoverySummary.txt"
+} > "summary-stats/${SAMPLE_ID}-FinalDiscoverySummary.txt"
 
 # safety scrub:
 # - s/\x1b//g         : Removes the 'ESC' character itself
 # - s/\x1b([A-Z]//g   : Removes set transitions like (B or (O
 # - s/\[[0-9;]*m//g   : Removes standard color codes
 # - s/[[:cntrl:]]//g  : Removes any other non-printable control characters
-sed -i 's/\x1b([A-Z]//g; s/\x1b\[[0-9;]*[a-zA-Z]//g; s/[[:cntrl:]]//g' summary_stats_files/"${SAMPLE_ID}-FinalDiscoverySummary.txt"
+sed -i 's/\x1b([A-Z]//g; s/\x1b\[[0-9;]*[a-zA-Z]//g; s/[[:cntrl:]]//g' summary-stats/"${SAMPLE_ID}-FinalDiscoverySummary.txt"
 
-cat summary_stats_files/"${SAMPLE_ID}-FinalDiscoverySummary.txt"
+cat summary-stats/"${SAMPLE_ID}-FinalDiscoverySummary.txt"
 echo "✓ Summary generated: ${SAMPLE_ID}-FinalDiscoverySummary.txt"
 echo "✓ Master AG list for SnpEff: ${SAMPLE_ID}-AG-Subs-Only-Sites.tsv"
 
