@@ -3,7 +3,7 @@ process POSTPROCESS_REDITOOLS_V1_OUTPUTS {
     tag "$sampleId"
     label 'postprocessReditools'
     container "${params.container__reditools}"
-    publishDir "${params.outputDir}/reditools-v1/${sampleId}/processed_calls_${sampleId}", mode: 'copy'
+    publishDir { "${params.outputDir}/reditools-v1/${sampleId}/processed_calls" }, mode: 'copy'
 
     input:
     tuple val(sampleId), path(bamFile), path(indexFile), path(dnaBamFile), path(dnaIndexFile)

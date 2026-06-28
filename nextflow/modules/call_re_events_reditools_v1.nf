@@ -3,7 +3,7 @@ process CALL_RE_EVENTS_REDITOOLS_V1 {
     tag "$sampleId"
     label 'callREEvents'
     container "${params.container__reditools}"
-    publishDir "${params.outputDir}/reditools-v1/${sampleId}", mode: 'copy'
+    publishDir { "${params.outputDir}/reditools-v1/${sampleId}" }, mode: 'copy'
 
     input:
     // Receives the existing tuple structure

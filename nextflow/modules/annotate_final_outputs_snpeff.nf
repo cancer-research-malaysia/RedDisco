@@ -3,7 +3,7 @@ process ANNOTATE_FINAL_OUTPUTS_SNPEFF {
     tag "$sampleId"
     label 'finalAnnotateSnpeff'
     container "${params.container__snpeff}"
-    publishDir "${params.outputDir}/reditools-v1/${sampleId}/annotated-sifted-sites", mode: 'copy'
+    publishDir { "${params.outputDir}/reditools-v1/${sampleId}/annotated-sifted-sites" }, mode: 'copy'
 
     input:
     tuple val(sampleId),
