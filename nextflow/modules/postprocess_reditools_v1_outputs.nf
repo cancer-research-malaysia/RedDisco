@@ -37,7 +37,7 @@ process POSTPROCESS_REDITOOLS_V1_OUTPUTS {
     // Final labeled outputs and summary statistics
     tuple val(sampleId),
           path("final-labeled-calls/${sampleId}-allEditing.tsv"),
-          path("final-labeled-calls/${SAMPLE_ID}-AG-Subs-Only-Sites.tsv"),
+          path("final-labeled-calls/${sampleId}-AG-Subs-Only-Sites.tsv"),
           path("final-labeled-calls/${sampleId}-knownEditing-labeled.tsv"),
           path("final-labeled-calls/${sampleId}-novelEditing.tsv"),
           emit: final_outputs
