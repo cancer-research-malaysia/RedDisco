@@ -18,3 +18,4 @@ tempo/*
 
 # metadata
 metadata/annots/*.fa
+metadata/annots/*.idx
