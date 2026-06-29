@@ -20,7 +20,7 @@ process QUANT_COUNTS_KALLISTO {
     if kallisto quant \
         -i ${index} \
         -o ${sampleName} \
-        -b ${params.bootstrap_samples} \
+        -b ${params.bootstrapSamples} \
         -t ${task.cpus} \
         ${read1} ${read2};
     then
