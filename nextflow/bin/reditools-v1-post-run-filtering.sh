@@ -337,6 +337,8 @@ fi
 # ============================================================================
 # Step 09-A: Re-analyze Novel ALU Sites with Stringent Criteria
 # ============================================================================
+# clean up just in case 
+rm -rf -- "${SAMPLE_ID}-firstalu"
 
 if [ "${SKIP_ALU}" = false ]; then
     echo "[Step 09-A] Re-analyzing novel ALU sites with stringent criteria..."
@@ -366,6 +368,8 @@ fi
 # ============================================================================
 # Step 09-B: Re-analyze Novel NONALU+NONREP Sites and Extract Reads
 # ============================================================================
+# clean up just in case 
+rm -rf -- "${SAMPLE_ID}-first"
 
 if [ "${SKIP_NONALU_NONREP}" = false ]; then
     echo "[Step 09-B] Re-analyzing novel NONALU+NONREP sites with stringent criteria..."
@@ -462,6 +466,8 @@ fi
 # ============================================================================
 # Step 12: Final Re-analysis with Deduplicated Reads and Multi-mapping Filter
 # ============================================================================
+# clean up just in case 
+rm -rf -- "${SAMPLE_ID}-second"
 
 if [ "${SKIP_NONALU_NONREP}" = false ]; then
     echo "[Step 12] Final re-analysis with deduplicated reads and multi-mapping filter..."
@@ -500,16 +506,16 @@ echo "[Step 13] Consolidating final results with editing status labels..."
 if [ "${SKIP_ALU}" = false ]; then
     echo "  - Extracting novel ALU sites from REDItools output..."
     FIRSTALU_DNARNA=$(find "${SAMPLE_ID}-firstalu" -type d -name "DnaRna_*" | head -n1)
-    
-    if [ -n "$FIRSTALU_DNARNA" ] && ls "${FIRSTALU_DNARNA}"/outTable_* 1> /dev/null 2>&1; then
-        # Copy raw output, skip any header lines
-        awk 'BEGIN {OFS="\t"} !/^Region/ && !/^#/' "${FIRSTALU_DNARNA}"/outTable_* > "${SAMPLE_ID}-novelEditing-ALU.raw"
-        NUM_NOVEL_ALU_FINAL=$(wc -l < "${SAMPLE_ID}-novelEditing-ALU.raw")
-        echo "    ✓ Novel ALU sites extracted: ${NUM_NOVEL_ALU_FINAL}"
-    else
-        echo "    ⚠ Novel ALU outTable not found in ${SAMPLE_ID}-firstalu"
-        NUM_NOVEL_ALU_FINAL=0
+
+    if [ -z "$FIRSTALU_DNARNA" ] || ! ls "${FIRSTALU_DNARNA}"/outTable_* 1> /dev/null 2>&1; then
+        echo "ERROR: ALU re-analysis ran but produced no outTable for sample ${SAMPLE_ID}." >&2
+        exit 1
     fi
+
+    awk 'BEGIN {OFS="\t"} !/^Region/ && !/^#/' "${FIRSTALU_DNARNA}"/outTable_* > "${SAMPLE_ID}-novelEditing-ALU.raw"
+
+    NUM_NOVEL_ALU_FINAL=$(wc -l < "${SAMPLE_ID}-novelEditing-ALU.raw")
+
 else
     NUM_NOVEL_ALU_FINAL=0
 fi
@@ -519,15 +525,15 @@ if [ "${SKIP_NONALU_NONREP}" = false ]; then
     echo "  - Extracting novel NONALU+NONREP sites from REDItools output..."
     SECOND_DNARNA=$(find "${SAMPLE_ID}-second" -type d -name "DnaRna_*" | head -n1)
     
-    if [ -n "$SECOND_DNARNA" ] && ls "${SECOND_DNARNA}"/outTable_* 1> /dev/null 2>&1; then
-        # Copy raw output, skip any header lines
-        awk 'BEGIN {OFS="\t"} !/^Region/ && !/^#/' "${SECOND_DNARNA}"/outTable_* > "${SAMPLE_ID}-novelEditing-NONALU-NONREP.raw"
-        NUM_NOVEL_NONALU_NONREP_FINAL=$(wc -l < "${SAMPLE_ID}-novelEditing-NONALU-NONREP.raw")
-        echo "    ✓ Novel NONALU+NONREP sites extracted: ${NUM_NOVEL_NONALU_NONREP_FINAL}"
-    else
-        echo "    ⚠ Novel NONALU+NONREP outTable not found in ${SAMPLE_ID}-second"
-        NUM_NOVEL_NONALU_NONREP_FINAL=0
+    if [ -z "$SECOND_DNARNA" ] || ! ls "${SECOND_DNARNA}"/outTable_* 1> /dev/null 2>&1; then
+        echo "ERROR: NONALU+NONREP re-analysis ran but produced no outTable for sample ${SAMPLE_ID}." >&2
+        exit 1
     fi
+
+    # Copy raw output, skip any header lines
+    awk 'BEGIN {OFS="\t"} !/^Region/ && !/^#/' "${SECOND_DNARNA}"/outTable_* > "${SAMPLE_ID}-novelEditing-NONALU-NONREP.raw"
+    NUM_NOVEL_NONALU_NONREP_FINAL=$(wc -l < "${SAMPLE_ID}-novelEditing-NONALU-NONREP.raw")
+    echo "    ✓ Novel NONALU+NONREP sites extracted: ${NUM_NOVEL_NONALU_NONREP_FINAL}"
 else
     NUM_NOVEL_NONALU_NONREP_FINAL=0
 fi

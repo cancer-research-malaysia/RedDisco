@@ -16,9 +16,18 @@ process CALL_RE_EVENTS_REDITOOLS_V1 {
 
     script:
     """
+    set -euo pipefail
+
+    # Defensive cleanup — guards against stale state if this work dir
+    # is being re-executed after an interruption (see note on -resume)
+    rm -rf ./${sampleId} ./reditools_raw_calls_${sampleId}
+
     # run the first round of Reditools for raw RNA editing site calling
     if REDItoolDnaRna.py -i ${bamFile} -j ${dnaBamFile} -f ${genomeFa} -o ${sampleId} -t ${task.cpus} -c 1,1 -m 30,255 -v 1 -q 30,30 -e -n 0.0 -N 0.0 -u -l -p -s2 -g2 -S; then
        echo "[Reditools] First round of Reditools completed successfully for sample ${sampleId}." && DNARNA=\$(find ./${sampleId} -type d -name "DnaRna_*" | head -n1) && echo "[Reditools] DNA-RNA editing output directory: \${DNARNA}"
+       
+       echo "[Reditools] DNA-RNA editing output directory: \${DNARNA}"
+       rm -rf -- ./reditools_raw_calls_${sampleId}
        mv \${DNARNA} ./reditools_raw_calls_${sampleId}
 
     else

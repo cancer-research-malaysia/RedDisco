@@ -16,31 +16,33 @@ process ANNOTATE_FINAL_OUTPUTS_SNPEFF {
 
     // Transcript-level Specialized Subsets 
     tuple val(sampleId),
-          path("snpSift-out/${sampleId}_transcript_level_editing.tsv"),
-          path("snpSift-out/${sampleId}_hyper_edited_protein-coding.tsv"),
-          path("snpSift-out/${sampleId}_isolated_high_penetrance_sites_protein-coding.tsv"),
-          path("snpSift-out/${sampleId}-snpSift/${sampleId}_neoantigen_candidates_protein-coding.tsv"),
+          path("${sampleId}_transcript_level_editing.tsv"),
+          path("${sampleId}_hyper_edited_protein-coding.tsv"),
+          path("${sampleId}_isolated_high_penetrance_sites_protein-coding.tsv"),
+          path("${sampleId}_neoantigen_candidates_protein-coding.tsv"),
           emit: transcript_level_tables
 
     script:
     def rawVcf = "${sampleId}-allEditing.vcf"
     def annVcf = "${sampleId}-allEditing.ann.vcf"
     """
-    echo "[Step 1/3] Converting REDItools TSV to VCF with strand correction for sample ${sampleId}..."
+    echo "[Step 1/3] Converting REDItools TSV to VCF..."
     bash reditools-v1-filt-output-to-custom-vcf.sh \
         ${allEditingTsv} \
         ${rawVcf}
 
-    echo "[Step 2/3] Running SnpEff annotation for sample ${sampleId}..."
+    echo "[Step 2/3] Running SnpEff annotation..."
+    # Write to a temporary file first so a crash never leaves a truncated VCF file tracked as 'valid'
     snpEff ann \
         -Xmx${task.memory.toGiga()}g \
         -v hg38 \
-        ${rawVcf} > ${annVcf}
+        ${rawVcf} > ${annVcf}.tmp
+    
+    mv ${annVcf}.tmp ${annVcf}
 
     echo "[Step 3/3] Extracting SnpEff-annotated VCF to TSV for sample ${sampleId}..."
     bash snpeff-annot-to-tsv.sh \
         ${annVcf} \
-        "snpSift-out" \
         ${sampleId}
 
     echo "[ANNOTATE_FINAL_OUTPUTS_SNPEFF] All steps completed successfully for sample ${sampleId}."
