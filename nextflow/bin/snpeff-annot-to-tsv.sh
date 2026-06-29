@@ -5,14 +5,14 @@
 # and preserves maximum frequency and impact metrics for downstream analytical forks.
 set -euo pipefail
 
-# Check for the 3 required positional parameters
-if [[ $# -ne 3 ]]; then
+# Check for the 2 required positional parameters
+if [[ $# -ne 2 ]]; then
     echo "Usage: $0 input.ann.vcf sample_name" >&2
     exit 1
 fi
 
 INPUT="$1"
-SAMPLE_NAME="$3"
+SAMPLE_NAME="$2"
 
 # Validation
 if [[ ! -f "$INPUT" ]]; then
