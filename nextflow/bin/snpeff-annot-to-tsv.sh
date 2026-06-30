@@ -109,12 +109,12 @@ NEO_MIN_FREQ=0.2000
 awk -F'\t' '
     NR == 1 { next }
     $6 == "protein_coding" && $3 > 2 { print }
-' "${PREFIX}/${SAMPLE_NAME}_transcript_level_editing.tsv" | \
-sort -t$'\t' -k4,4nr > "${PREFIX}/${SAMPLE_NAME}_hyper_edited_protein-coding.tmp"
+' "${SAMPLE_NAME}_transcript_level_editing.tsv" | \
+sort -t$'\t' -k4,4nr > "${SAMPLE_NAME}_hyper_edited_protein-coding.tmp"
 
 awk 'BEGIN{print "TRANSCRIPT\tGENE\tEDITING_SITES\tWEIGHTED_MEAN_FREQ\tMAX_FREQ\tBIOTYPE\tIMPACT\tEFFECTS"}{print}' \
-    "${PREFIX}/${SAMPLE_NAME}_hyper_edited_protein-coding.tmp" \
-    > "${PREFIX}/${SAMPLE_NAME}_hyper_edited_protein-coding.tsv"
+    "${SAMPLE_NAME}_hyper_edited_protein-coding.tmp" \
+    > "${SAMPLE_NAME}_hyper_edited_protein-coding.tsv"
 
 
 # --- FORK 2: Isolated High-Penetrance Sites (Clean, highly efficient singletons/doubletons) ---
@@ -123,12 +123,12 @@ awk 'BEGIN{print "TRANSCRIPT\tGENE\tEDITING_SITES\tWEIGHTED_MEAN_FREQ\tMAX_FREQ\
 awk -F'\t' '
     NR == 1 { next }
     $6 == "protein_coding" && $3 <= 2 && $5 >= 0.5000 { print }
-' "${PREFIX}/${SAMPLE_NAME}_transcript_level_editing.tsv" | \
-sort -t$'\t' -k5,5nr > "${PREFIX}/${SAMPLE_NAME}_isolated_high_penetrance_sites.tmp"
+' "${SAMPLE_NAME}_transcript_level_editing.tsv" | \
+sort -t$'\t' -k5,5nr > "${SAMPLE_NAME}_isolated_high_penetrance_sites.tmp"
 
 awk 'BEGIN{print "TRANSCRIPT\tGENE\tEDITING_SITES\tWEIGHTED_MEAN_FREQ\tMAX_FREQ\tBIOTYPE\tIMPACT\tEFFECTS"}{print}' \
-    "${PREFIX}/${SAMPLE_NAME}_isolated_high_penetrance_sites.tmp" \
-    > "${PREFIX}/${SAMPLE_NAME}_isolated_high_penetrance_sites_protein-coding.tsv"
+    "${SAMPLE_NAME}_isolated_high_penetrance_sites.tmp" \
+    > "${SAMPLE_NAME}_isolated_high_penetrance_sites_protein-coding.tsv"
 
 
 # --- FORK 3: Neoantigen Candidates (Altered coding framework with frequency filtering) ---
@@ -137,12 +137,12 @@ awk 'BEGIN{print "TRANSCRIPT\tGENE\tEDITING_SITES\tWEIGHTED_MEAN_FREQ\tMAX_FREQ\
 awk -F'\t' -v min_freq="$NEO_MIN_FREQ" '
     NR == 1 { next }
     $6 == "protein_coding" && ($7 ~ /MODERATE/ || $7 ~ /HIGH/) && $5 >= min_freq { print }
-' "${PREFIX}/${SAMPLE_NAME}_transcript_level_editing.tsv" | \
-sort -t$'\t' -k5,5nr > "${PREFIX}/${SAMPLE_NAME}_neoantigen_candidates.tmp"
+' "${SAMPLE_NAME}_transcript_level_editing.tsv" | \
+sort -t$'\t' -k5,5nr > "${SAMPLE_NAME}_neoantigen_candidates.tmp"
 
 awk 'BEGIN{print "TRANSCRIPT\tGENE\tEDITING_SITES\tWEIGHTED_MEAN_FREQ\tMAX_FREQ\tBIOTYPE\tIMPACT\tEFFECTS"}{print}' \
-    "${PREFIX}/${SAMPLE_NAME}_neoantigen_candidates.tmp" \
-    > "${PREFIX}/${SAMPLE_NAME}_neoantigen_candidates_protein-coding.tsv"
+    "${SAMPLE_NAME}_neoantigen_candidates.tmp" \
+    > "${SAMPLE_NAME}_neoantigen_candidates_protein-coding.tsv"
 
 
 # Clean up temporary scraps safely
