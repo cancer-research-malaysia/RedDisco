@@ -33,14 +33,18 @@ FIELDS="CHROM POS REF ALT ANN STRAND FREQ COV REPTYPE REPNAME EDITSTATUS"
 echo "Extracting all known sites..."
 SnpSift filter "REDIPORTAL == 'ed'" "$INPUT" | \
 SnpSift extractFields - $FIELDS \
-    > "${SAMPLE_NAME}.known_sites_all_freq.tmp.tsv"
+> "${SAMPLE_NAME}.known_sites_all_freq.tsv.part"
 
-# Validate size BEFORE making anything official
-if [[ ! -s "${SAMPLE_NAME}.known_sites_all_freq.tmp.tsv" ]]; then
-    echo "Error: No matching known sites found for sample ${SAMPLE_NAME}" >&2
-    rm -f "${SAMPLE_NAME}.known_sites_all_freq.tmp.tsv"
+# Validate the working file
+if [[ ! -s "${SAMPLE_NAME}.known_sites_all_freq.tsv.part" ]]; then
+    echo "Error: The content of ${SAMPLE_NAME} appears to be empty" >&2
+    rm -f "${SAMPLE_NAME}.known_sites_all_freq.tsv.part"
     exit 1
 fi
+
+# Only now does the "real" output name come into existence
+mv "${SAMPLE_NAME}.known_sites_all_freq.tsv.part" \
+   "${SAMPLE_NAME}.known_sites_all_freq.tsv"
 
 # -------------------------------------------------------------------------
 # Step 2: Collapse to Transcript-Level Matrices via In-Memory Stream Processing
