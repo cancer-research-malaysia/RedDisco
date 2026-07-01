@@ -20,7 +20,7 @@ process ANNOTATE_FINAL_OUTPUTS_SNPEFF {
           path("${sampleId}_hyper_edited_protein-coding.tsv"),
           path("${sampleId}_isolated_high_penetrance_sites_protein-coding.tsv"),
           path("${sampleId}_neoantigen_candidates_protein-coding.tsv"),
-          path("${sampleId}.known_sites_all_freq.tsv")
+          path("${sampleId}.known_sites_all_freq.tsv"),
           emit: transcript_level_tables
 
     script:
