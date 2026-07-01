@@ -94,7 +94,7 @@ END {
         printf "%s\t%s\t%d\t%.4f\t%.4f\t%s\t%s\t%s\n",
             tx, gene_name[tx], count[tx], weighted_mean, maxfreq[tx], biolist[tx], impactlist[tx], effectlist[tx]
     }
-}' "${SAMPLE_NAME}.known_sites_all_freq.tmp.tsv" | sort -k3,3nr -k4,4nr > "${SAMPLE_NAME}_transcript_level_editing.tmp"
+}' "${SAMPLE_NAME}.known_sites_all_freq.tsv" | sort -k3,3nr -k4,4nr > "${SAMPLE_NAME}_transcript_level_editing.tmp"
 
 # -------------------------------------------------------------------------
 # Step 3: Downstream Analytical Splits and Specialized Sorting Forks
