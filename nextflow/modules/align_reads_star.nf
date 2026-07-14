@@ -4,9 +4,9 @@ process ALIGN_READS_STAR {
     cpus params.numCores
     
     label 'alignReadsStar'
-    
     container "${params.container__preproc}"
-
+    publishDir { "${params.outputDir}/STAR-alignments/${sampleName}/processed_calls" }, mode: 'copy'
+    
     input:
         tuple val(sampleName), path(trimmedReads)
         path starIndex
