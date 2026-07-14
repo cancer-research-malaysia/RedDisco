@@ -1,0 +1,4 @@
+sampleName	dnaBamPath	dnaBaiPath	rnafastq1	rnafastq2
+24T-SD0077	s3://	s3://	s	s
+70T-SD0791	s3://	s3://	s	s
+113T-SD1396	s3://	s3://	s	s

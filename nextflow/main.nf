@@ -12,6 +12,19 @@ include { QUANT_COUNTS_KALLISTO } from './modules/quant_counts_kallisto.nf'
 include { QC_READS_FASTQC as QC_RAW } from './modules/qc_reads_fastqc.nf'
 include { QC_READS_FASTQC as QC_TRIMMED } from './modules/qc_reads_fastqc.nf'
 
+// !!! IMPORT STAR ALIGNMENT MODULE !!!
+include { ALIGN_READS_STAR } from './modules/align_reads_star.nf'
+
+// Define the alignment sub-workflow outside of the main workflow block
+workflow GENERAL_READS_ALIGNMENT_WF {
+    take:
+        trimmedCh
+        starIndex
+    main:
+        ALIGN_READS_STAR(trimmedCh, starIndex)
+    emit:
+        alignedBamCh = ALIGN_READS_STAR.out.final_bam
+}
 
 workflow {
 
@@ -24,29 +37,27 @@ workflow {
         error "Genome reference file (--genomeFa) must be provided"
     }
 
-    // Channel 1: Extract BAM information
-    bam_ch = channel
+    // Channel 1: Extract BAM information (DNA sample paths)
+    dnaBam_ch = channel
         .fromPath(params.manifestPath)
         .splitCsv(header: true, sep: '\t')
-        .filter { row -> row.bamPath }
+        .filter { row -> row.dnaBamPath }
         .map { row ->
             tuple(
                 row.sampleName,
-                file(row.bamPath),
-                file(row.baiPath),
                 file(row.dnaBamPath),
                 file(row.dnaBaiPath)
             )
         }
-    
+
     // Channel 2: Extract FASTQ information + Strict Naming/Pairing Checks
     fastq_ch = channel
         .fromPath(params.manifestPath)
         .splitCsv(header: true, sep: '\t')
-        .filter { row -> row.fastq1 && row.fastq2 } 
+        .filter { row -> row.rnaFastq1 && row.rnaFastq2 } 
         .map { row ->
-            def read1 = file(row.fastq1)
-            def read2 = file(row.fastq2)
+            def read1 = file(row.rnaFastq1)
+            def read2 = file(row.rnaFastq2)
             
             // Re-apply the strict R1/R2 suffix and extension validation from the directory loop
             def r1 = read1.name =~ /[_\.][Rr]?1\.(fastq|fq)(\.gz)?$/
@@ -69,6 +80,7 @@ workflow {
     snp_gtf_index            = file(params.snpGtfIndex)
     rediportals_db_gtf       = file(params.rediportalsDbGtf)
     rediportals_db_gtf_index = file(params.rediportalsDbGtfIndex)
+    star_index               = file(params.starIndex)
 
     ///////////////////////// --- Main Analysis --- /////////////////////////////
 
@@ -95,24 +107,41 @@ workflow {
     )
 
 
-    // --- TRACK B: Main REDItools RNA-Editing Variant Pipeline ---
+    // --- TRACK B: Reads alignment ---
+    
+    // Run alignment using your defined sub-workflow
+    def alignedBams = GENERAL_READS_ALIGNMENT_WF(TRIM_READS_FASTP.out.trimmed_reads, star_index).alignedBamCh
+
+    // Merge RNA alignment outputs with DNA BAM metadata from the manifest on sampleName (index 0)
+    // Yields: tuple(sampleName, rnaBam, rnaBai, dnaBam, dnaBai)
+    rnaWesPaired = alignedBams.join(dnaBam_ch, by: 0)
+
+
+
+    // --- TRACK C: Main REDItools RNA-Editing Variant Pipeline ---
 
     // Step 1: Call RNA editing events using REDItools v1
+    // Pass the paired channel directly
     CALL_RE_EVENTS_REDITOOLS_V1(
-        bam_ch,
+        rnaWesPaired,
         genome_fa
     )
 
-    // Step 2: Join bam_ch and reditools output on sampleId before postprocessing
-    // This guarantees correct sample pairing regardless of parallel execution order
-    postprocess_input_ch = bam_ch
+    // Step 2: Join the rna_dna_paired_ch with REDItools output on sampleId
+    // Yields: tuple(sampleId, rnaBam, rnaBai, dnaBam, dnaBai, reditoolsOut)
+    postprocess_input_ch = rnaWesPaired
         .join(CALL_RE_EVENTS_REDITOOLS_V1.out.reditools_output, by: 0)
 
+
     POSTPROCESS_REDITOOLS_V1_OUTPUTS(
-        postprocess_input_ch.map { sampleId, bam, bai, dnaBam, dnaBai, _reditoolsOut ->
-            tuple(sampleId, bam, bai, dnaBam, dnaBai) },
-        postprocess_input_ch.map { sampleId, _bam, _bai, _dnaBam, _dnaBai, reditoolsOut ->
-            tuple(sampleId, reditoolsOut) },
+        // Maps down to: tuple(sampleId, rnaBam, rnaBai, dnaBam, dnaBai)
+        postprocess_input_ch.map { sampleId, rnaBam, rnaBai, dnaBam, dnaBai, _reditoolsOut ->
+            tuple(sampleId, rnaBam, rnaBai, dnaBam, dnaBai) 
+        },
+        // Maps down to: tuple(sampleId, reditoolsOut)
+        postprocess_input_ch.map { sampleId, _rnaBam, _rnaBai, _dnaBam, _dnaBai, reditoolsOut ->
+            tuple(sampleId, reditoolsOut) 
+        },
         genome_fa,
         splice_sites,
         excluded_contigs,
@@ -125,7 +154,6 @@ workflow {
     )
 
     // Step 3: VCF conversion, SnpEff annotation, and final TSV extraction
-    // Single-emit source — no join needed
     ANNOTATE_FINAL_OUTPUTS_SNPEFF(
         POSTPROCESS_REDITOOLS_V1_OUTPUTS.out.final_outputs
             .map { sampleId, allEditing, _agSubs, _knownLabeled, _novel ->
