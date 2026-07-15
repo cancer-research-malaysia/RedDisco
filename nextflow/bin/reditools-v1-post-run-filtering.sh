@@ -596,7 +596,7 @@ if [ ${NUM_NOVEL_TOTAL} -gt 0 ]; then
 
     echo "    ✓ Status labels added"
 else
-    touch "${SAMPLE_ID}-novelEditing.tsv"
+    touch final-labeled-calls/"${SAMPLE_ID}-novelEditing.tsv"
 fi
 
 # Process known editing sites - add status label based on category

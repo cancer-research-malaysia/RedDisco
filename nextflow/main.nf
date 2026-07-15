@@ -21,7 +21,10 @@ workflow GENERAL_READS_ALIGNMENT_WF {
         trimmedCh
         starIndex
     main:
-        ALIGN_READS_STAR(trimmedCh, starIndex)
+        // Adjust the flat 3-element tuple into the expected 2-element tuple structure
+        adjustedCh = trimmedCh.map { sampleName, r1, r2 -> tuple(sampleName, [r1, r2]) }
+        
+        ALIGN_READS_STAR(adjustedCh, starIndex)
     emit:
         alignedBamCh = ALIGN_READS_STAR.out.final_bam
 }
@@ -69,6 +72,9 @@ workflow {
             
             tuple(row.sampleName, read1, read2)
         }
+
+    dnaBam_ch.view { "WES Channel item: $it" }
+    fastq_ch.view { "FASTQ Channel item: $it" }
 
     // Reference files setup
     genome_fa                = file(params.genomeFa)

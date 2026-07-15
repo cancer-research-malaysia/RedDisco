@@ -30,12 +30,20 @@ process ALIGN_READS_STAR {
     # STAR normal alignment for general tools
     if star-align-REDi.sh "\${READ1}" "\${READ2}" "\${SAMPLE_ID}" ${task.cpus} "\${STAR_INDEX}"; then
         echo "STAR general alignment is complete!"
-        # index only as the STAR command outputs bam sorted by coordinates already - create files with the names Nextflow expects
-        samtools index -@ ${task.cpus} "\${SAMPLE_ID}-STAR*.bam"
+        # 1. Use an unquoted Bash wildcard to find whatever BAM file was just generated.
+        # Since this directory only contains this specific sample's run, this is completely safe.
+        FOUND_BAM=\$(ls \${SAMPLE_ID}*.bam)
+
+        echo "Found aligned BAM: \${FOUND_BAM}"
+        
+        # 2. Rename it to a clean, standardized format that Nextflow expects
+        mv "\${FOUND_BAM}" "\${SAMPLE_ID}-STAR_Aligned.coordSorted.bam"
+        
+        # 3. Safely index the cleanly named file
+        samtools index -@ ${task.cpus} "\${SAMPLE_ID}-STAR_Aligned.coordSorted.bam"
     else
         echo "STAR alignment failed. Check logs. Exiting..."
         exit 1
     fi
-
     """
 }
