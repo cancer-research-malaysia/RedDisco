@@ -400,6 +400,36 @@ fi
 # Step 10: Identify Multi-mapping Reads Using BLAT
 # ============================================================================
 
+# if [ "${SKIP_NONALU_NONREP}" = false ]; then
+#     echo "[Step 10] Identifying multi-mapping reads with BLAT..."
+    
+#     FIRST_DNARNA=$(find "${SAMPLE_ID}-first" -type d -name "DnaRna_*" | head -n1)
+    
+#     if [ -z "$FIRST_DNARNA" ]; then
+#         echo "ERROR: Could not find DnaRna_* directory in ${SAMPLE_ID}-first. Exiting."
+#         exit 1
+#     fi
+    
+#     echo "  ✓ Using directory: ${FIRST_DNARNA}"
+    
+#     pblat -t=dna -q=rna -stepSize=5 -repMatch=2253 -minScore=20 -minIdentity=0 \
+#         "${GENOME_FA}" \
+#         "${FIRST_DNARNA}/outReads_$(basename ${FIRST_DNARNA} | sed 's/DnaRna_//')" \
+#         "${FIRST_DNARNA}/reads.psl"
+    
+#     if [ ! -f "${FIRST_DNARNA}/reads.psl" ]; then
+#         echo "ERROR: BLAT output file reads.psl not found in ${FIRST_DNARNA}. Exiting."
+#         exit 1
+#     fi
+    
+#     readPsl.py "${FIRST_DNARNA}/reads.psl" "${FIRST_DNARNA}/badreads.txt"
+    
+#     NUM_BADREADS=$(wc -l < "${FIRST_DNARNA}/badreads.txt" 2>/dev/null || echo "0")
+#     echo "  ✓ Multi-mapping reads identified: ${NUM_BADREADS}"
+# else
+#     echo "[Step 10] SKIPPED - No novel NONALU & NONREP sites"
+# fi
+
 if [ "${SKIP_NONALU_NONREP}" = false ]; then
     echo "[Step 10] Identifying multi-mapping reads with BLAT..."
     
@@ -412,29 +442,41 @@ if [ "${SKIP_NONALU_NONREP}" = false ]; then
     
     echo "  ✓ Using directory: ${FIRST_DNARNA}"
     
-    pblat -t=dna -q=rna -stepSize=5 -repMatch=2253 -minScore=20 -minIdentity=0 \
-        "${GENOME_FA}" \
-        "${FIRST_DNARNA}/outReads_$(basename ${FIRST_DNARNA} | sed 's/DnaRna_//')" \
-        "${FIRST_DNARNA}/reads.psl"
+    QUERY_READS="${FIRST_DNARNA}/outReads_$(basename ${FIRST_DNARNA} | sed 's/DnaRna_//')"
     
-    if [ ! -f "${FIRST_DNARNA}/reads.psl" ]; then
-        echo "ERROR: BLAT output file reads.psl not found in ${FIRST_DNARNA}. Exiting."
-        exit 1
+    # Check if the outReads file exists and has content
+    if [ -s "${QUERY_READS}" ]; then
+        SKIP_BLAT=false
+        pblat -t=dna -q=rna -stepSize=5 -repMatch=2253 -minScore=20 -minIdentity=0 \
+            "${GENOME_FA}" \
+            "${QUERY_READS}" \
+            "${FIRST_DNARNA}/reads.psl"
+        
+        if [ ! -f "${FIRST_DNARNA}/reads.psl" ]; then
+            echo "ERROR: BLAT output file reads.psl not found in ${FIRST_DNARNA}. Exiting."
+            exit 1
+        fi
+        
+        readPsl.py "${FIRST_DNARNA}/reads.psl" "${FIRST_DNARNA}/badreads.txt"
+        
+        NUM_BADREADS=$(wc -l < "${FIRST_DNARNA}/badreads.txt" 2>/dev/null || echo "0")
+        echo "  ✓ Multi-mapping reads identified: ${NUM_BADREADS}"
+    else
+        echo "  ⚠ No query reads found in ${QUERY_READS} (0 sites passed stringent criteria). Skipping BLAT filtering."
+        SKIP_BLAT=true
+        # Create an empty badreads file so downstream consolidation steps don't break
+        touch "${FIRST_DNARNA}/badreads.txt"
     fi
-    
-    readPsl.py "${FIRST_DNARNA}/reads.psl" "${FIRST_DNARNA}/badreads.txt"
-    
-    NUM_BADREADS=$(wc -l < "${FIRST_DNARNA}/badreads.txt" 2>/dev/null || echo "0")
-    echo "  ✓ Multi-mapping reads identified: ${NUM_BADREADS}"
 else
     echo "[Step 10] SKIPPED - No novel NONALU & NONREP sites"
+    SKIP_BLAT=true
 fi
 
 # ============================================================================
 # Step 11: Extract and Deduplicate Reads
 # ============================================================================
 
-if [ "${SKIP_NONALU_NONREP}" = false ]; then
+if [ "${SKIP_NONALU_NONREP}" = false ] && [ "${SKIP_BLAT}" = false ]; then
     echo "[Step 11] Extracting and deduplicating reads..."
     
     sort -k1,1 -k2,2n -k3,3n "${FIRST_DNARNA}/outPosReads_$(basename ${FIRST_DNARNA} | sed 's/DnaRna_//')" | \
@@ -469,7 +511,7 @@ fi
 # clean up just in case 
 rm -rf -- "${SAMPLE_ID}-second"
 
-if [ "${SKIP_NONALU_NONREP}" = false ]; then
+if [ "${SKIP_NONALU_NONREP}" = false ] && [ "${SKIP_BLAT}" = false ]; then
     echo "[Step 12] Final re-analysis with deduplicated reads and multi-mapping filter..."
     
     if [ ! -f "${SAMPLE_ID}_bed_ns_fx_st_dedup.bam" ]; then
@@ -521,7 +563,7 @@ else
 fi
 
 # Extract novel NONALU+NONREP results if they exist
-if [ "${SKIP_NONALU_NONREP}" = false ]; then
+if [ "${SKIP_NONALU_NONREP}" = false ] && [ "${SKIP_BLAT}" = false ]; then
     echo "  - Extracting novel NONALU+NONREP sites from REDItools output..."
     SECOND_DNARNA=$(find "${SAMPLE_ID}-second" -type d -name "DnaRna_*" | head -n1)
     
@@ -535,19 +577,20 @@ if [ "${SKIP_NONALU_NONREP}" = false ]; then
     NUM_NOVEL_NONALU_NONREP_FINAL=$(wc -l < "${SAMPLE_ID}-novelEditing-NONALU-NONREP.raw")
     echo "    ✓ Novel NONALU+NONREP sites extracted: ${NUM_NOVEL_NONALU_NONREP_FINAL}"
 else
+    echo "  ⚠ Skipping novel NONALU+NONREP extraction (no sites survived stringent filters)."
     NUM_NOVEL_NONALU_NONREP_FINAL=0
 fi
 
 # Combine all novel sites for annotation
 echo "  - Combining all novel editing sites..."
-if [ "${SKIP_ALU}" = false ] && [ "${SKIP_NONALU_NONREP}" = false ]; then
+if [ "${SKIP_ALU}" = false ] && [ "${SKIP_NONALU_NONREP}" = false ] && [ "${SKIP_BLAT}" = false ]; then
     cat "${SAMPLE_ID}-novelEditing-ALU.raw" "${SAMPLE_ID}-novelEditing-NONALU-NONREP.raw" > "${SAMPLE_ID}-novelEditing.raw"
 elif [ "${SKIP_ALU}" = false ]; then
     cp "${SAMPLE_ID}-novelEditing-ALU.raw" "${SAMPLE_ID}-novelEditing.raw"
-elif [ "${SKIP_NONALU_NONREP}" = false ]; then
+elif [ "${SKIP_NONALU_NONREP}" = false ] && [ "${SKIP_BLAT}" = false ]; then
     cp "${SAMPLE_ID}-novelEditing-NONALU-NONREP.raw" "${SAMPLE_ID}-novelEditing.raw"
 else
-    touch "${SAMPLE_ID}-novelEditing.raw"  # Empty file
+    touch "${SAMPLE_ID}-novelEditing.raw"  # Safely creates an empty file if nothing survived
 fi
 
 NUM_NOVEL_TOTAL=$(wc -l < "${SAMPLE_ID}-novelEditing.raw" 2>/dev/null || echo "0")

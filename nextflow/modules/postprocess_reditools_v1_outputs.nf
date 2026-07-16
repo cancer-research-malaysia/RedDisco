@@ -32,7 +32,7 @@ process POSTPROCESS_REDITOOLS_V1_OUTPUTS {
     tuple val(sampleId),
           path("${sampleId}-firstalu"),
           path("${sampleId}-second"),
-          emit: out_tables
+          emit: out_tables, optional: true
 
     // Final labeled outputs and summary statistics
     tuple val(sampleId),
@@ -49,24 +49,14 @@ process POSTPROCESS_REDITOOLS_V1_OUTPUTS {
 
     // Intermediate files for publishing
     path "outTable_${sampleId}"
-    path "${sampleId}-first"
+    path "${sampleId}-first", optional: true
 
     script:
     """
     echo "[Reditools Postprocessing] DNA-RNA editing output directory: ${reditoolsOutputDir}"
     echo "[Reditools Postprocessing] Starting post-processing for raw RNA editing calls for sample ${sampleId}."
 
-    if bash reditools-v1-post-run-filtering.sh \
-            ${bamFile} \
-            ${reditoolsOutputDir} \
-            ${genomeFa} \
-            ${spliceSitesAnnot} \
-            ${excludedContigs} \
-            ${rmskGtf} \
-            ${snpGtf} \
-            ${rediportalsDbGtf} \
-            ${task.cpus} \
-            ${sampleId}; then
+    if bash reditools-v1-post-run-filtering.sh ${bamFile} ${reditoolsOutputDir} ${genomeFa} ${spliceSitesAnnot} ${excludedContigs} ${rmskGtf} ${snpGtf} ${rediportalsDbGtf} ${task.cpus} ${sampleId}; then
         echo "[Reditools Postprocessing] Post-processing completed successfully for sample ${sampleId}."
     else
         echo "[Reditools Postprocessing] Error: Post-processing failed for sample ${sampleId}." >&2
