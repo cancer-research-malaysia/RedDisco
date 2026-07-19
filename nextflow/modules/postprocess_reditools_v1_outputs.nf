@@ -19,9 +19,6 @@ process POSTPROCESS_REDITOOLS_V1_OUTPUTS {
     path rediportalsDbGtfIndex
 
     output:
-    // Direct equivalent of the old for_wrangling emit:
-    //   ${SAMPLE_ID}--pos.txt     -> ${sampleId}-NONALU-NONREP--novelEditing.txt
-    //   ${SAMPLE_ID}--pos-ALU.txt -> ${sampleId}-ALU--novelEditing.txt
     tuple val(sampleId),
           path("upstream-site-level-split-tables/${sampleId}-knownEditing.txt"),
           path("upstream-site-level-split-tables/${sampleId}-NONALU-NONREP--novelEditing.txt"),
@@ -37,14 +34,12 @@ process POSTPROCESS_REDITOOLS_V1_OUTPUTS {
     // Final labeled outputs and summary statistics
     tuple val(sampleId),
           path("final-labeled-calls/${sampleId}-allEditing.tsv"),
-          path("final-labeled-calls/${sampleId}-AG-Subs-Only-Sites.tsv"),
           path("final-labeled-calls/${sampleId}-knownEditing-labeled.tsv"),
           path("final-labeled-calls/${sampleId}-novelEditing.tsv"),
           emit: final_outputs
 
     tuple val(sampleId),
           path("summary-stats/${sampleId}-editingSummary.txt"),
-          path("summary-stats/${sampleId}-FinalDiscoverySummary.txt"),
           emit: summary_stats
 
     // Intermediate files for publishing

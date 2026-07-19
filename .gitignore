@@ -19,3 +19,6 @@ tempo/*
 # metadata
 metadata/annots/*.fa
 metadata/annots/*.idx
+
+# temp files
+tempo/*

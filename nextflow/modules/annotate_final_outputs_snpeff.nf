@@ -11,21 +11,19 @@ process ANNOTATE_FINAL_OUTPUTS_SNPEFF {
 
     output:
     // Generic intermediate VCFs mapped from the allEditing
-    path "${sampleId}-allEditing.vcf"
-    path "${sampleId}-allEditing.ann.vcf"
+    path "${sampleId}-allSingleSubsEditing.pre-annot.vcf"
+    path "${sampleId}-allSingleSubsEditing.annot.vcf"
 
     // Transcript-level Specialized Subsets 
     tuple val(sampleId),
-          path("${sampleId}_transcript_level_editing.tsv"),
-          path("${sampleId}_hyper_edited_protein-coding.tsv"),
-          path("${sampleId}_isolated_high_penetrance_sites_protein-coding.tsv"),
-          path("${sampleId}_neoantigen_candidates_protein-coding.tsv"),
-          path("${sampleId}.known_sites_all_freq.tsv"),
-          emit: transcript_level_tables
+          path("${sampleId}_single-subs-all-sites.tsv"),
+          path("${sampleId}_AG-subs-all-sites.tsv"),
+          path("${sampleId}_AG-subs-rediportal-known-sites.tsv"),
+          emit: out_tables
 
     script:
-    def rawVcf = "${sampleId}-allEditing.vcf"
-    def annVcf = "${sampleId}-allEditing.ann.vcf"
+    def rawVcf = "${sampleId}-allSingleSubsEditing.pre-annot.vcf"
+    def annVcf = "${sampleId}-allSingleSubsEditing.annot.vcf"
     """
     echo "[Step 1/3] Converting REDItools TSV to VCF..."
     bash reditools-v1-filt-output-to-custom-vcf.sh \

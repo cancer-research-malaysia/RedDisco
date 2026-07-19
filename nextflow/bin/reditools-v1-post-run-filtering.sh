@@ -689,61 +689,61 @@ echo "Summary statistics: ${SAMPLE_ID}-editingSummary.txt"
 # ============================================================================
 # Step 14: Final Filter, Category Discovery & Deep Statistics
 # ============================================================================
-echo "[Step 14] Generating AG-Substitution-Site-only list and comprehensive statistics..."
+# echo "[Step 14] Generating AG-Substitution-Site-only list and comprehensive statistics..."
 
-# 14-A: Create the High-Confidence Master List
-# Filter: Canonical A-to-G only
-awk 'BEGIN {FS="\t"; OFS="\t"} 
-NR==1 {print $0} 
-NR>1 {
-    if ($3=="A" && $8=="AG") print $0
-}' final-labeled-calls/"${SAMPLE_ID}-allEditing.tsv" > final-labeled-calls/"${SAMPLE_ID}-AG-Subs-Only-Sites.tsv"
+# # 14-A: Create the High-Confidence Master List
+# # Filter: Canonical A-to-G only
+# awk 'BEGIN {FS="\t"; OFS="\t"} 
+# NR==1 {print $0} 
+# NR>1 {
+#     if ($3=="A" && $8=="AG") print $0
+# }' final-labeled-calls/"${SAMPLE_ID}-allEditing.tsv" > final-labeled-calls/"${SAMPLE_ID}-AG-Subs-Only-Sites.tsv"
 
-# 14-B: Site-Based Category Discovery
-# This counts unique genomic locations using the custom labels
-TOTAL_SITES=$(grep -v "Region" final-labeled-calls/"${SAMPLE_ID}-allEditing.tsv" | wc -l)
-TOTAL_AG=$(grep -v "Region" final-labeled-calls/"${SAMPLE_ID}-AG-Subs-Only-Sites.tsv" | wc -l)
+# # 14-B: Site-Based Category Discovery
+# # This counts unique genomic locations using the custom labels
+# TOTAL_SITES=$(grep -v "Region" final-labeled-calls/"${SAMPLE_ID}-allEditing.tsv" | wc -l)
+# TOTAL_AG=$(grep -v "Region" final-labeled-calls/"${SAMPLE_ID}-AG-Subs-Only-Sites.tsv" | wc -l)
 
-# Categorize specifically for the log output
-ALU_AG=$(grep -P "\t[^\t]*ALU[^\t]*$" final-labeled-calls/"${SAMPLE_ID}-AG-Subs-Only-Sites.tsv" | wc -l)
-NONALU_AG=$(grep -P "\t[^\t]*NONALU[^\t]*$" final-labeled-calls/"${SAMPLE_ID}-AG-Subs-Only-Sites.tsv" | wc -l)
-NONREP_AG=$(grep -P "\t[^\t]*NONREP[^\t]*$" final-labeled-calls/"${SAMPLE_ID}-AG-Subs-Only-Sites.tsv" | wc -l)
-AG_RATIO=$(awk -v t="$TOTAL_SITES" -v a="$TOTAL_AG" 'BEGIN {if (t > 0) printf "%.2f", (a/t)*100; else print "0"}')
+# # Categorize specifically for the log output
+# ALU_AG=$(grep -P "\t[^\t]*ALU[^\t]*$" final-labeled-calls/"${SAMPLE_ID}-AG-Subs-Only-Sites.tsv" | wc -l)
+# NONALU_AG=$(grep -P "\t[^\t]*NONALU[^\t]*$" final-labeled-calls/"${SAMPLE_ID}-AG-Subs-Only-Sites.tsv" | wc -l)
+# NONREP_AG=$(grep -P "\t[^\t]*NONREP[^\t]*$" final-labeled-calls/"${SAMPLE_ID}-AG-Subs-Only-Sites.tsv" | wc -l)
+# AG_RATIO=$(awk -v t="$TOTAL_SITES" -v a="$TOTAL_AG" 'BEGIN {if (t > 0) printf "%.2f", (a/t)*100; else print "0"}')
 
-# 14-C: Run the REDItools Weighted Statistics Utility
-# This provides the deep read-level substitution distribution math
-echo "  - Running getStatistics.py for weighted read distribution..."
-get_statistics-v2.py --input final-labeled-calls/"${SAMPLE_ID}-allEditing.tsv" --output final-labeled-calls/"${SAMPLE_ID}-editingStats.txt"
+# # 14-C: Run the REDItools Weighted Statistics Utility
+# # This provides the deep read-level substitution distribution math
+# echo "  - Running getStatistics.py for weighted read distribution..."
+# get_statistics-v2.py --input final-labeled-calls/"${SAMPLE_ID}-allEditing.tsv" --output final-labeled-calls/"${SAMPLE_ID}-editingStats.txt"
 
-# 14-D: Generate Consolidated Console Report
-{
-    printf "%s\n" "===================================================="
-    printf "%s\n" "       RNA EDITING SITE DISCOVERY SUMMARY           "
-    printf "%s\n" "===================================================="
-    printf "Sample ID:             %s\n" "${SAMPLE_ID}"
-    printf "Total Candidate Sites: %s\n" "${TOTAL_SITES}"
-    printf "High-Conf AG Sites:    %s (Freq >= 0.1)\n" "${TOTAL_AG}"
-    printf "AG Specificity Ratio:  %s%%\n" "${AG_RATIO}"
-    printf "%s\n" "----------------------------------------------------"
-    printf "%s\n" "AG Site Distribution (Unique Locations):"
-    printf "  - Alu Elements:      %s\n" "${ALU_AG}"
-    printf "  - Non-Alu Repeats:   %s\n" "${NONALU_AG}"
-    printf "  - Non-Rep Regions:   %s\n" "${NONREP_AG}"
-    printf "%s\n" "----------------------------------------------------"
-    printf "Weighted Read Stats:   %s-editingStats.txt\n" "${SAMPLE_ID}"
-    printf "%s\n" "===================================================="
-} > "summary-stats/${SAMPLE_ID}-FinalDiscoverySummary.txt"
+# # 14-D: Generate Consolidated Console Report
+# {
+#     printf "%s\n" "===================================================="
+#     printf "%s\n" "       RNA EDITING SITE DISCOVERY SUMMARY           "
+#     printf "%s\n" "===================================================="
+#     printf "Sample ID:             %s\n" "${SAMPLE_ID}"
+#     printf "Total Candidate Sites: %s\n" "${TOTAL_SITES}"
+#     printf "High-Conf AG Sites:    %s (Freq >= 0.1)\n" "${TOTAL_AG}"
+#     printf "AG Specificity Ratio:  %s%%\n" "${AG_RATIO}"
+#     printf "%s\n" "----------------------------------------------------"
+#     printf "%s\n" "AG Site Distribution (Unique Locations):"
+#     printf "  - Alu Elements:      %s\n" "${ALU_AG}"
+#     printf "  - Non-Alu Repeats:   %s\n" "${NONALU_AG}"
+#     printf "  - Non-Rep Regions:   %s\n" "${NONREP_AG}"
+#     printf "%s\n" "----------------------------------------------------"
+#     printf "Weighted Read Stats:   %s-editingStats.txt\n" "${SAMPLE_ID}"
+#     printf "%s\n" "===================================================="
+# } > "summary-stats/${SAMPLE_ID}-FinalDiscoverySummary.txt"
 
 # safety scrub:
 # - s/\x1b//g         : Removes the 'ESC' character itself
 # - s/\x1b([A-Z]//g   : Removes set transitions like (B or (O
 # - s/\[[0-9;]*m//g   : Removes standard color codes
 # - s/[[:cntrl:]]//g  : Removes any other non-printable control characters
-sed -i 's/\x1b([A-Z]//g; s/\x1b\[[0-9;]*[a-zA-Z]//g; s/[[:cntrl:]]//g' summary-stats/"${SAMPLE_ID}-FinalDiscoverySummary.txt"
+# sed -i 's/\x1b([A-Z]//g; s/\x1b\[[0-9;]*[a-zA-Z]//g; s/[[:cntrl:]]//g' summary-stats/"${SAMPLE_ID}-FinalDiscoverySummary.txt"
 
-cat summary-stats/"${SAMPLE_ID}-FinalDiscoverySummary.txt"
-echo "✓ Summary generated: ${SAMPLE_ID}-FinalDiscoverySummary.txt"
-echo "✓ Master AG list for SnpEff: ${SAMPLE_ID}-AG-Subs-Only-Sites.tsv"
+# cat summary-stats/"${SAMPLE_ID}-FinalDiscoverySummary.txt"
+# echo "✓ Summary generated: ${SAMPLE_ID}-FinalDiscoverySummary.txt"
+# echo "✓ Master AG list for SnpEff: ${SAMPLE_ID}-AG-Subs-Only-Sites.tsv"
 
 # ============================================================================
 # COMPLETION MESSAGE
@@ -785,7 +785,6 @@ echo ""
 echo "OUTPUT FILES:"
 echo "-------------"
 echo "  ★ FINAL COMPLETE SET (with header): ${SAMPLE_ID}-allEditing.tsv"
-echo "  ★ SUMMARY STATISTICS: ${SAMPLE_ID}-editingSummary.txt"
 echo ""
 echo "  Intermediate files:"
 echo "    Known editing sites: ${SAMPLE_ID}-knownEditing-labeled.tsv"

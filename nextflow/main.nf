@@ -162,7 +162,7 @@ workflow {
     // Step 3: VCF conversion, SnpEff annotation, and final TSV extraction
     ANNOTATE_FINAL_OUTPUTS_SNPEFF(
         POSTPROCESS_REDITOOLS_V1_OUTPUTS.out.final_outputs
-            .map { sampleId, allEditing, _agSubs, _knownLabeled, _novel ->
+            .map { sampleId, allEditing, _knownLabeled, _novel ->
                    tuple(sampleId, allEditing) }
     )
 
