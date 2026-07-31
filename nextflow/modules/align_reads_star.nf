@@ -1,6 +1,6 @@
 //
 process ALIGN_READS_STAR {
-    // maxForks 10
+    tag "${sampleName}"
     cpus params.numCores
     
     label 'alignReadsStar'
